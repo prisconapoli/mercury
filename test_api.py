@@ -6,7 +6,6 @@ from app.api_1_0.models import db, Mail, Event
 from app.api_1_0.errors import ValidationError
 
 class TestApi(unittest.TestCase):
-
     def setUp(self):
         self.app = create_app('testing')
         self.ctx = self.app.app_context()
@@ -156,14 +155,11 @@ class TestApi(unittest.TestCase):
         mail = json.loads(response.data.decode('utf-8'))
         self.assertIsNotNone(mail['events'])
         events = mail['events']
-        print location
-        print events
         response = self.client.get(
             events,
             headers=self.headers)
         self.assertTrue(response.status_code == 200)
         mail = json.loads(response.data.decode('utf-8'))
-        print mail
 
 if __name__ == '__main__':
     unittest.main()
