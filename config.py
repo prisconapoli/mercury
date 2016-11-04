@@ -15,9 +15,9 @@ class Config(object):
     CSRF_SESSION_KEY = os.environ.get('CSRF_SESSION_KEY') or \
         '91c1dde9-bbd0-4cee-b2a6-ad4c4ab02818'
 
+    SQLALCHEMY_DATABASE_URI = os.environ.get('DATABASE_URL')
     SQLALCHEMY_COMMIT_ON_TEARDOWN = True
     SQLALCHEMY_TRACK_MODIFICATIONS = True
-
     CSRF_ENABLED = True
 
     #Keep track of the life time of am mail
@@ -38,8 +38,7 @@ class Config(object):
 class ProductionConfig(Config):
     """ The production configuration. """
 
-    SQLALCHEMY_DATABASE_URI = os.environ.get('DATABASE_URL') or \
-        'sqlite:///' + os.path.join(basedir, 'data.sqlite')
+    SQLALCHEMY_DATABASE_URI = os.environ.get('DATABASE_URL')
 
     #Defaul cache type. For production use Redis, Memcached or filesystem cache
     CACHE_TYPE = 'simple'
@@ -67,9 +66,21 @@ class TestingConfig(Config):
     CACHE_TYPE = 'simple'
     CELERY_ENABLE = False
 
+class HerokuConfig(ProductionConfig):
+    @classmethod
+    def init_app(cls, app):
+        ProductionConfig.init_app(app)
+        # log to stderr
+        import logging
+        from logging import StreamHandler
+        file_handler = StreamHandler()
+        file_handler.setLevel(logging.WARNING)
+        app.logger.addHandler(file_handler)
+
 config = {
     'development': DevelopmentConfig,
     'production': ProductionConfig,
     'testing': TestingConfig,
+    'heroku': HerokuConfig,
     'default': DevelopmentConfig
 }

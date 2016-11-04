@@ -106,7 +106,7 @@ class Event(db.Model):
 
     __tablename__ = 'events'
     id=db.Column(db.Integer, primary_key=True)
-    created_at=db.Column(db.Integer, default=timestamp)
+    created_at=db.Column(db.BigInteger, default=timestamp)
     created_by=db.Column(db.String, default='')
     event=db.Column(db.String)
     mail_id=db.Column(db.Integer, db.ForeignKey('mails.id'))

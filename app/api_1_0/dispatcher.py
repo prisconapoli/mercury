@@ -30,7 +30,7 @@ class Dispatcher(object):
     @staticmethod
     def dispatch(mail, url_events=None):
         attempts = []
-        if current_app.config['CELERY_ENABLE']:
+        if current_app.config['CELERY_ENABLE'] is True:
             return enqueue.apply_async(args=[mail, attempts, url_events])
         else:
             (service_name, service) = get_mail_server(attempts)
