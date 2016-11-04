@@ -50,7 +50,7 @@ class TestApi(unittest.TestCase):
         self.assertTrue(mail['content'] == message['content'])
         self.assertIsNotNone(mail['url'])
 
-    def test_invalid_email(self):
+    def test_mandatory_fields(self):
         message1 = {
             'sender': '',
             'recipient': 'prisco.napoli@gmail.com', 
@@ -65,8 +65,19 @@ class TestApi(unittest.TestCase):
             'content': 'content'
         }
 
+        response = self.client.post(
+            self.base_url + 'mails/',
+            data=json.dumps(message1), headers=self.headers)
+        self.assertTrue(response.status_code == 400)
+
+        response = self.client.post(
+            self.base_url + 'mails/',
+            data=json.dumps(message2), headers=self.headers)
+        self.assertTrue(response.status_code == 400)
+
+    def test_field_limit(self):
         sender = 'a' * (Mail.MaxSenderLen + 1)  
-        message3 = {
+        message1 = {
             'sender': sender,
             'recipient': self.recipient, 
             'subject': 'subject',
@@ -74,27 +85,11 @@ class TestApi(unittest.TestCase):
         }
 
         recipient = 'a' * (Mail.MaxRecipientLen + 1) 
-        message4 = {
+        message2 = {
             'sender': self.sender,
             'recipient': recipient, 
             'subject': 'subject',
             'content': 'content'
-        }
-
-        subject = 'a' * (Mail.MaxSubjectLen + 1) 
-        message5 = {
-            'sender': self.sender,
-            'recipient': self.recipient, 
-            'subject': subject,
-            'content': 'content'
-        }
-
-        content = 'a' * (Mail.MaxContentLen + 1) 
-        message6 = {
-            'sender': self.sender,
-            'recipient': self.recipient, 
-            'subject': 'subject',
-            'content': content
         }
 
         response = self.client.post(
@@ -107,25 +102,34 @@ class TestApi(unittest.TestCase):
             data=json.dumps(message2), headers=self.headers)
         self.assertTrue(response.status_code == 400)
 
+    def test_subject_limit(self):
+        subject = 'a' * (Mail.MaxSubjectLen + 1) 
+        message = {
+            'sender': self.sender,
+            'recipient': self.recipient, 
+            'subject': subject,
+            'content': 'content'
+        }
+
         response = self.client.post(
             self.base_url + 'mails/',
-            data=json.dumps(message3), headers=self.headers)
+            data=json.dumps(message), headers=self.headers)
         self.assertTrue(response.status_code == 400)
+
+    def test_content_limit(self):
+        content = 'a' * (Mail.MaxContentLen + 1) 
+        message4 = {
+            'sender': self.sender,
+            'recipient': self.recipient, 
+            'subject': 'subject',
+            'content': content
+        }
 
         response = self.client.post(
             self.base_url + 'mails/',
             data=json.dumps(message4), headers=self.headers)
         self.assertTrue(response.status_code == 400)
 
-        response = self.client.post(
-            self.base_url + 'mails/',
-            data=json.dumps(message5), headers=self.headers)
-        self.assertTrue(response.status_code == 400)
-
-        response = self.client.post(
-            self.base_url + 'mails/',
-            data=json.dumps(message6), headers=self.headers)
-        self.assertTrue(response.status_code == 400)
 
     def test_email_not_found(self):
         mail_id = 1
