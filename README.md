@@ -12,3 +12,6 @@ python manage.py runserver
 Test
 coverage run test_api.py
 coverage report -m --omit='venv/*'
+
+Deployed
+m3rcury.herokuapp.compgrade: python db_
