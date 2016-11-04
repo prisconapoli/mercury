@@ -23,10 +23,8 @@ class Config(object):
     #Keep track of the life time of am mail
     TRACK_EVENTS = True
 
-    # For production use Redis, Memcached, filesystem cache
     CACHE_TYPE = os.environ.get('CACHE_TYPE')
 
-    #Celery, use Redis by default
     CELERY_ENABLE = True
     CELERY_BROKER_URL = os.environ.get('CELERY_BROKER_URL') or\
         'redis://localhost:6379/0' 
@@ -37,6 +35,16 @@ class Config(object):
     def init_app(app):
         pass
 
+class ProductionConfig(Config):
+    """ The production configuration. """
+
+    SQLALCHEMY_DATABASE_URI = os.environ.get('DATABASE_URL') or \
+        'sqlite:///' + os.path.join(basedir, 'data.sqlite')
+
+    #Defaul cache type. For production use Redis, Memcached or filesystem cache
+    CACHE_TYPE = 'simple'
+    CELERY_ENABLE = False
+
 class DevelopmentConfig(Config):
     """ The development configuration. """
 
@@ -46,13 +54,6 @@ class DevelopmentConfig(Config):
         'sqlite:///' + os.path.join(basedir, 'data-dev.sqlite')
 
     CACHE_TYPE = 'simple'
-
-class ProductionConfig(Config):
-    """ The production configuration. """
-
-    SQLALCHEMY_DATABASE_URI = os.environ.get('DATABASE_URL') or \
-        'sqlite:///' + os.path.join(basedir, 'data.sqlite')
-
 
 class TestingConfig(Config):
     """ The test configuration. """
@@ -65,8 +66,6 @@ class TestingConfig(Config):
 
     CACHE_TYPE = 'simple'
     CELERY_ENABLE = False
-    TRACK_EVENTS = True
-
 
 config = {
     'development': DevelopmentConfig,
