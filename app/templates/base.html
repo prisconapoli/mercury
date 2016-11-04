@@ -1,0 +1,88 @@
+{% extends "bootstrap/base.html" %}
+
+{% block title %}M3rcury{% endblock title %}
+{{super()}}
+{% block head %}
+{{ super() }}
+{% block favicon %}
+<link rel="shortcut icon" href="{{ url_for('static', filename='favicon.ico') }}" type="image/x-icon">
+<link rel="icon" href="{{ url_for('static', filename='images/favicon.ico') }}" type="image/x-icon">
+{% endblock %}
+
+{% block styles -%}
+{{super()}}
+<link href="//netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.min.css" rel="stylesheet">
+{% endblock styles %}
+
+
+{% endblock head %}
+
+{% block navbar %}
+<nav class="navbar navbar-inverse">
+  <div class="container-fluid">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#myNavbar">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand">m3rcury</a>
+    </div>
+    <div class="collapse navbar-collapse" id="myNavbar">
+      <ul class="nav navbar-nav">
+        <li><a href="/">Home</a></li>
+      </ul>
+    </div>
+  </div>
+</nav>
+{% endblock navbar %}
+
+{% block content %}
+{{super()}}
+<div class="row">
+  <div class="col-sm-3"></div>
+  <div class="col-sm-6">
+    <br/>
+    <br/>
+    <br/>
+  <div class="row">
+    {% block page_content %}
+    {% endblock page_content%}
+  </div>
+  </div>
+  <div class="col-sm-3"></div>
+</div>
+<section id="about" class="secPad">
+  <div class="container">
+  </div>
+</section>          
+{%- block footer %}
+<footer>
+  <br/>
+  <br/>
+  <br/>
+  <br/>
+  <section class="links">
+    <div class="social text-center">
+      <a href="https://plus.google.com/105302638507040399054"><i class="fa fa-google-plus fa-2x"></i></a>
+      <a href="http://ie.linkedin.com/in/prisconapoli"><i class="fa fa-linkedin fa-2x" ></i></a>
+      <a href="https://github.com/prisconapoli/sourcecode.com"><i class="fa fa-github fa-2x"></i></a>                
+      <a href="http://stackoverflow.com/users/2558324/prisco-napoli"><i class="fa fa-stack-overflow 2x"></i></a>
+    </div>
+  </section>
+  <br/>
+  <section class="copyright">
+    <div class="container">
+      <div class="row">
+        <div class="col-sm-12 text-center">&copy; 2016 Designed with <i class="fa fa-heart"></i> by <a href="http://ie.linkedin.com/in/prisconapoli" target="_blank">Prisco Napoli</a> using <a href='http://flask.pocoo.org/'>Flask</a>.
+        </div>
+      </div>
+    </div>
+  </section>
+
+</footer>
+{%- endblock footer %}
+
+
+{% endblock  content%}
+

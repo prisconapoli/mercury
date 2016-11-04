@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+{% import "bootstrap/wtf.html" as wtf %}
+{% block title %}M3rcury - Sent{% endblock %}
+{% block page_content %}
+<section id="confi,">
+    <div class="heading text-center">
+        <img src="{{ url_for('static', filename = 'images/logo.png') }}" width="200" height="85">
+        <h1>Wow!</h1>
+        <p>
+            <h2>Mail Accepted</h2>
+            <br/>
+            Check the links below to get a summary  of the message or track the status of your request
+            <br/>
+            <b>Summary</b>
+            <a href='{{ location }}'> {{ location }} </a>
+            <br/>
+            <b>Status</b>
+            <a href='{{ location }}/events'> {{ location }}/events </a>
+        </p>
+    </div>
+    {{ Location }}
+</section>
+{% endblock %}

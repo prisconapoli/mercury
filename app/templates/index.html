@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+{% import "bootstrap/wtf.html" as wtf %}
+{% block title %}M3rcury - Home{% endblock %}
+{% block page_content %}
+<section id="index">
+    <div class="heading text-center">
+        <img src="{{ url_for('static', filename = 'images/logo.png') }}" width="200" height="85">
+
+        <h1>Welcome in M3rcury</h1>
+        <p></h2>This project presents a solution to the &copy;Uber <a href="https://github.com/uber/coding-challenge-tools/blob/master/coding_challenge.md"><b>Email Service</b></a> coding challenge.</h2>
+            <br/>
+            Source code is located on <a href="https://github.com/prisconapoli/mercury"><b>github</b></a>.
+        </p>
+        
+    </div>
+    {{ wtf.quick_form(form) }}
+</section>
+{% endblock %}
