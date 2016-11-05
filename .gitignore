@@ -6,4 +6,4 @@ redis-stable
 htmlcov
 tmp
 .coverage
-.DS_Store
+**/.DS_Store
