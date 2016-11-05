@@ -13,23 +13,25 @@ class SendgridService(MailService):
     This is a concrete class that inherits from MailService
     It requires the definition of these properties:
         SENDGRID_API_KEY
+
+    All methods are thread safe. All data are passed as arguments.
+    Only local variable are used. There are no changes in the object status.
     """
 
     Name = 'Sendgrid'
     def __init__(self):
         self.id = str(uuid.uuid4())
-        self.sg = sendgrid.SendGridAPIClient(apikey=MailConfig.SENDGRID_API_KEY)
-
-    def info(self, key):
-        pass
 
     def name(self):
         return SendgridService.Name + ":" + self.id 
 
     def send(self, mail, url_events=None):
-        #The sendgrid mail helper does not support multiple recipients
-        #Send one mail per time
+        """ Send a message."""
         try:
+            sg = sendgrid.SendGridAPIClient(apikey=MailConfig.SENDGRID_API_KEY)
+
+            #The sendgrid mail helper does not support multiple recipients
+            #send one mail per time
             for recipient in mail.get_recipient():
                 sendgrind_mail = Mail(
                     Email(mail.get_sender()), mail.get_subject(),
@@ -43,7 +45,7 @@ class SendgridService(MailService):
                         mail_id=mail.id,
                         blob=json.dumps({'to': recipient})))
 
-                response = self.sg.client.mail.send.post(request_body=sendgrind_mail.get())
+                response = sg.client.mail.send.post(request_body=sendgrind_mail.get())
                 self.postprocess(resp=response, mail=mail, url_events=url_events)
             return True
         except requests.exceptions.RequestException as e:

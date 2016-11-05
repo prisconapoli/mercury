@@ -9,11 +9,8 @@ class Config(object):
     TESTING = False
 
     #SqlAlchemy
-    SECRET_KEY = os.environ.get('SECRET_KEY') or \
-        'd57a322c-4fc1-4421-9155-9cfbb35f2baa'
-
-    CSRF_SESSION_KEY = os.environ.get('CSRF_SESSION_KEY') or \
-        '91c1dde9-bbd0-4cee-b2a6-ad4c4ab02818'
+    SECRET_KEY = os.environ.get('SECRET_KEY')
+    CSRF_SESSION_KEY = os.environ.get('CSRF_SESSION_KEY')
 
     SQLALCHEMY_DATABASE_URI = os.environ.get('DATABASE_URL')
     SQLALCHEMY_COMMIT_ON_TEARDOWN = True
@@ -25,7 +22,7 @@ class Config(object):
 
     CACHE_TYPE = os.environ.get('CACHE_TYPE')
 
-    CELERY_ENABLE = True
+    QUEUE = True
     CELERY_BROKER_URL = os.environ.get('CELERY_BROKER_URL') or\
         'redis://localhost:6379/0' 
     CELERY_RESULT_BACKEND = os.environ.get('CELERY_RESULT_BACKEND') or \
@@ -42,7 +39,7 @@ class ProductionConfig(Config):
 
     #Defaul cache type. For production use Redis, Memcached or filesystem cache
     CACHE_TYPE = 'simple'
-    CELERY_ENABLE = False
+    QUEUE = False
 
 class DevelopmentConfig(Config):
     """ The development configuration. """
@@ -64,7 +61,7 @@ class TestingConfig(Config):
         'sqlite:///' + os.path.join(basedir, 'data-test.sqlite')
 
     CACHE_TYPE = 'simple'
-    CELERY_ENABLE = False
+    QUEUE = False
 
 class HerokuConfig(ProductionConfig):
     @classmethod

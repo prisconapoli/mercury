@@ -17,12 +17,13 @@ def get_mail_server(attempts):
     attempts (list of str): contains the name of
     the services already choosen to process this request
     """
+
     if len(attempts):
         for server in mail_services.keys():
             if server not in attempts:
                 return (server, mail_services[server])
     else:
-        i = random.randrange(0, len(mail_services))
+        i = random.randrange(0, 1e9)%len(mail_services)
         return (mail_services.keys()[i], mail_services.values()[i])
     
 class Dispatcher(object):
@@ -30,7 +31,10 @@ class Dispatcher(object):
     @staticmethod
     def dispatch(mail, url_events=None):
         attempts = []
-        if current_app.config['CELERY_ENABLE'] is True:
+        if current_app.config['QUEUE'] is True:
+            post_event_url(url_events, build_event(created_by=Dispatcher.Name, \
+                event=('ENQUEUE'), mail_id=mail.id, blob=json.dumps({'service':service_name})))
+            service.send(mail, url_events)
             return enqueue.apply_async(args=[mail, attempts, url_events])
         else:
             (service_name, service) = get_mail_server(attempts)

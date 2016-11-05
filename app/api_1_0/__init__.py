@@ -7,8 +7,11 @@ from . import mail, event, errors, exceptions,utils
 from .decorators import json
 
 def endpoints():
-    """Get the main endpoint for the RESTful API """
-    return {'mails_url': url_for('api.get_mails', _external=True)}
+    """Get the main endpoints for the RESTful API """
+    return {
+        'Get email collection [GET]': url_for('api.get_mails'),
+        'Create a new email [POST]': url_for('api.new_mail')
+    }
 
 
 @api.route('/')

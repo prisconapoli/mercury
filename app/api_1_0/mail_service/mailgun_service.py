@@ -14,6 +14,9 @@ class MailgunService(MailService):
         MAILGUN_URL_API
         MAILGUN_DOMAIN_NAME
         MAILGUN_API_KEY
+
+    All methods are thread safe. All data are passed as arguments.
+    Only local variable are used. There are no changes in the object status.
     """
 
     Name = 'Mailgun'
@@ -21,7 +24,6 @@ class MailgunService(MailService):
         self.id = str(uuid.uuid4())
 
     def name(self):
-
         return MailgunService.Name + ":" + self.id 
 
     def send(self, mail, url_events=None):
