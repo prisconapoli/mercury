@@ -1,7 +1,7 @@
 # M3rcury Email Service
 
 <p align="center">
-  <img src="https://github.com/prisconapoli/mercury/blob/master/app/static/images/logo.png" width="50%" height="50%" />
+  <img src="https://github.com/prisconapoli/mercury/blob/master/app/static/images/logo.png" width="30%"/>
 </p>
 
 
