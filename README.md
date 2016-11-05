@@ -1,8 +1,9 @@
 # M3rcury Email Service
 
-![alt text][logo]
+<p align="center">
+  <img src="https://github.com/prisconapoli/mercury/blob/master/app/static/images/logo.png" width="50%" height="50%" />
+</p>
 
-[logo]: https://github.com/prisconapoli/mercury/blob/master/app/static/images/logo.png
 
 The M3rcury project presents a solution for the [Uber© Email Service](https://github.com/uber/coding-challenge-tools/blob/master/coding_challenge.md) coding challenge. The challenge consists in design and develop a mail service that accepts the necessary information from the users and sends emails.
 To provide service availability, the service uses internally two email services.
