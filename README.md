@@ -59,16 +59,17 @@ python manage.py createdb --force
 ```
 
 #### Usage
-The fastest way is use the [live site](https://m3rcury.herokuapp.com). Fill the form and click on *send* button. If everything is fine, you will be redirect through a new page that contains to links to see your request and the processing status:
+The fastest way is use the [live site](https://m3rcury.herokuapp.com). Fill the form and click on *send* button.
 
-![alt text][homepage]
+<p align="center">
+  <img src="https://github.com/prisconapoli/mercury/blob/master/images/homepage.jpg" width="25%"/>
+</p>
 
-[homepage]: https://github.com/prisconapoli/mercury/blob/master/images/homepage.jpg
+If everything is fine, you will be redirect through a new page that contains the links to see your request and the processing status:
 
-
-![alt text][accepted]
-
-[accepted]: https://github.com/prisconapoli/mercury/blob/master/images/accepted.jpg
+<p align="center">
+  <img src="https://github.com/prisconapoli/mercury/blob/master/images/accepted.jpg" width="25%"/>
+</p>
 
 #### Improvements
 If I had more time, I wish to do the following improvements:
