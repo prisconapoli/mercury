@@ -212,10 +212,14 @@ The first step I've taken was define a **mail model**. The process of sending an
 
 [event_model]: https://github.com/prisconapoli/mercury/blob/master/images/mail_model.jpg
 
-I've started to investigate what kind of components I needed to perform a specific step, e.g. keep the validation inside the RESTFul API, have a dispatcher to select the mail provider, provide a task queue to distribute the load, have separate workers for every service providers.
+I've started to investigate what kind of components I needed to perform a specific step.
+- validation can be performed in the RESTFul API
+- a dispatcher to choose a mail provider and retry in case of failures
+- a task queue to distribute the load wich guarantee the built-in persistance
+- separate workers for every service providers
 
-Moreover, an important requirement for me was to build an *observable* system. 
-It should be possible keep track of every decision taken inside the application, and answer questions:
+Moreover, an important requirement for me was to build an observable system. It should be possible keep track of every decision taken inside the application, and answer questions:
+
 - when this email has been receveived?
 - why the email has not been delivered to the recipient? Was a validation failure? Maybe the task queue was down?
 - what are the mail providers choosen by the dispatcher to serve a particular message?
@@ -223,7 +227,9 @@ It should be possible keep track of every decision taken inside the application,
 - what is the fastest mail provider?
 - what are the failure rates of the mail providers?
 
-After this consideration, I have defined the API endpoints and the database model to store the email and the events:
+I have decided to store all the events, and make sure that this "store facility" was accessible through the RESTful API. 
+
+After these considerations, I have defined the API endpoints and the information to store for mails and events
 
 #### RESTful API
 
@@ -237,10 +243,9 @@ After this consideration, I have defined the API endpoints and the database mode
 | GET         | http[s]://[hostname]/api/v1.0/mails/[mail_id]/events/[event_id] | Retrieve an event      |
 
 
-As last step, I have investigated the best tools to develop what I had in my mind. The choice has been develop m3rcury with Python and Flask. Flask is a largely adopted microframework to build web applications. It is well documented (tons of tutorials, book and videos onlines) and well integrated with a large number of extensions to support typical use cases, e.g. web forms, databases, working queue, caching, test automation. 
-Below is described the technological stack.
+As last step, I have investigated the best tools to develop what I had in mind.I ended to develop M3rcury with Python and Flask. Flask is a largely adopted microframework to build web applications. It is well documented (tons of tutorials, book and videos onlines) and well integrated with a large number of extensions to support typical use cases, e.g. web forms, databases, working queue, caching, test automation. Below the M3rcury technology stack.
 
-### Technological Stack
+### Technology Stack
 ###### Front-end
 - Flask-WTF + Bootstrap + Font Awesome for the web pages
 - Flask-Cache for view and function caching
