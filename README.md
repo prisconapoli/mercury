@@ -9,7 +9,8 @@ To provide service availability, the service uses internally two email services.
 
 
 Live on [Heroku](https://m3rcury.herokuapp.com).
-My LinkedIn [profile](http://ie.linkedin.com/in/prisconapoli)
+
+Check my LinkedIn [profile](http://ie.linkedin.com/in/prisconapoli)
 
 ## Overview
 
@@ -122,11 +123,11 @@ HTTP/1.1 200 OK
 }
 ```
 
-Checking the last event (id=202), you can see the email has been delivered with success (status_code 202) by Sendgrid on 06 Nov 2016 11:39:41 GMT (created_at=1478432381838607104)
+Checking the last event (id=202), you can see the email has been delivered with success (status_code = 202) by *Sendgrid* on *06 Nov 2016 11:39:41 GMT* (created_at=1478432381838607104)
 
-''' 
+```
 user$ http --json GET https://m3rcury.herokuapp.com/api/v1.0/mails/36/events/202
-'''
+```
 
 Server response
 ```
