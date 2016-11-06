@@ -63,12 +63,12 @@ The fastest way is use the [live site](https://m3rcury.herokuapp.com). Fill the 
 
 ![alt text][homepage]
 
-[event_model]: https://github.com/prisconapoli/mercury/blob/master/images/homepage.jpeg
+[homepage]: https://github.com/prisconapoli/mercury/blob/master/images/homepage.jpg
 
 
 ![alt text][accepted]
 
-[event_model]: https://github.com/prisconapoli/mercury/blob/master/images/accepted.jpeg
+[accepted]: https://github.com/prisconapoli/mercury/blob/master/images/accepted.jpg
 
 #### Improvements
 If I had more time, I wish to do the following improvements:
