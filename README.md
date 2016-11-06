@@ -32,16 +32,34 @@ cd mercury
 virtualenv venv
 source venv/bin/activate
 ```
-- Install requirements and database creation
+- Specify environment variables or edit configuration files:
+*config.py*
+```
+SECRET_KEY
+CSRF_SESSION_KEY
+```
+**mail_config.py**
+```
+SENDGRID_API_KEY
+MAILGUN_URL_API
+MAILGUN_DOMAIN_NAME
+MAILGUN_API_KEY
+```
+
+- Install the module required and create the database
 ```
 pip install -r requirements.txt
 python manage.py createdb
 ```
-- Start Celery and Redis
+- Open a separate windows to start Redis
 ```
 run_redis.h
+```
+- Open a separate windows to start Celery
+```
 run_celery.h
 ```
+
 - Start the server
 ```
 python manage.py runserver
@@ -141,6 +159,14 @@ HTTP/1.1 200 OK
 }
 ```
 
+#### Testing
+Make sure that the service is running, then open a separate window and run 
+```python test_api.py```
+
+Coverage test
+```coverage run test_apy.py```
+```coverage report -m --omit='venv/*'```
+
 #### Improvements
 If I had more time, I wish to do the following improvements:
 
@@ -152,6 +178,13 @@ If I had more time, I wish to do the following improvements:
 
 ##### Things left out
 I had no time to create web pages to track the progress of every request in real time. The idea is collect all the events related to a mail, and show them along with time information and delivery status.
+
+Moreover, my goal was to integrate the coverage test in the manage.py, e.g. 
+```
+python manage.py test 
+python manage.py test coverage
+```
+Flask-Scripts at the moment does not run test with multithread mode enabled.
 
 ##### Service limitation
 **Mailgun** requires a list of *Authorized Recipients*. All the emails to Unknown address will be discarded.
