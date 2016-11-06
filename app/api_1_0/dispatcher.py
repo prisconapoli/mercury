@@ -33,8 +33,7 @@ class Dispatcher(object):
         attempts = []
         if current_app.config['QUEUE'] is True:
             post_event_url(url_events, build_event(created_by=Dispatcher.Name, \
-                event=('ENQUEUE'), mail_id=mail.id, blob=json.dumps({'service':service_name})))
-            service.send(mail, url_events)
+                event=('ENQUEUE'), mail_id=mail.id))
             return enqueue.apply_async(args=[mail, attempts, url_events])
         else:
             (service_name, service) = get_mail_server(attempts)
