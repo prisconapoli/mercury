@@ -200,36 +200,35 @@ This is a limitation of Flask-Scripts which can't run test with multithread mode
 
 ##Architecture
 I have designed M3rcury with the following goals:
-- availability: the service should be accessible across Internet, e.g. RESTful 
-- scalability:  should be easy take advantage of additional computational/storage resources, or have many teams of developers that works on different parts
-- reliablility: define a retry policy in case of failure, handle graceful degradation
-- devops friendly: should be easy deploy and monitoring the status of the system
-- security: allows only secure connections
+- availability: the service should be accessible across Internet, e.g. RESTful API, HTTP + JSON
+- scalability:  should be easy take advantage of additional computational/storage resources, or have many teams of developers that works on different parts of the application
+- reliablility: define a retry policy in case of failures, handle graceful degradation
+- devops friendly: should be easy deploy and monitoring the status of the application
+- security: allows connections over https, don't expose private keys
 
-The first step I've taken was define a **mail model**. The process of sending an email has been described as a series of steps(or events). Look at the image below:
+The first step was define a **mail model**, where the process of send an email has been split in a series of steps(or events). Look at the image below:
 
 ![alt text][event_model]
 
 [event_model]: https://github.com/prisconapoli/mercury/blob/master/images/mail_model.jpg
 
-I've started to investigate what kind of components I needed to perform a specific step.
-- validation can be performed in the RESTFul API
-- a dispatcher to choose a mail provider and retry in case of failures
-- a task queue to distribute the load wich guarantee the built-in persistance
-- separate workers for every service providers
+With this model, I've started to investigate what kind of components were required to perform a step.
+- validation can be done in the RESTFul API
+- a dispatcher can choose the mail provider and retry in case of failures
+- a task queue will distribute the load, with the guarantee of built-in persistance
+- separate workers for every mail service providers
 
-Moreover, an important requirement for me was to build an observable system. It should be possible keep track of every decision taken inside the application, and answer questions:
-
-- when this email has been receveived?
+An important goal for me was design an *observable* system. Basically, it should be possible keep track of every decision taken inside the application, and answer questions:
+- when this email entered the system? How much time taken to delivery it?
 - why the email has not been delivered to the recipient? Was a validation failure? Maybe the task queue was down?
 - what are the mail providers choosen by the dispatcher to serve a particular message?
 - how much time a message stays in the queue?
 - what is the fastest mail provider?
 - what are the failure rates of the mail providers?
 
-I have decided to store all the events, and make sure that this "store facility" was accessible through the RESTful API. 
+As a consequence, I have decided to provides through the API the methods to store and retrieve all the events related to a particular mail.
 
-After these considerations, I have defined the API endpoints and the information to store for mails and events
+With the considerations reported before, I have defined the API endpoints and the information to store for mails and events:
 
 #### RESTful API
 
@@ -243,9 +242,30 @@ After these considerations, I have defined the API endpoints and the information
 | GET         | http[s]://[hostname]/api/v1.0/mails/[mail_id]/events/[event_id] | Retrieve an event      |
 
 
-As last step, I have investigated the best tools to develop what I had in mind.I ended to develop M3rcury with Python and Flask. Flask is a largely adopted microframework to build web applications. It is well documented (tons of tutorials, book and videos onlines) and well integrated with a large number of extensions to support typical use cases, e.g. web forms, databases, working queue, caching, test automation. Below the M3rcury technology stack.
+#### Mail
+| field     | description            |
+|-----------|------------------------|
+| id        | unique identifier      |
+| sender    | sender address         |
+| recipient | recipient address      |
+| subject   | subject of the message |
+| content   | message content        |
+| events    | link to events         |
+
+#### Event
+| field      | description                       |
+|------------|-----------------------------------|
+| id         | unique identifier                 |
+| created_at | creation time                     |
+| created_by | creator of the event              |
+| event      | event description                 |
+| mail       | the mail the event refers to      |
+| blob       | additional information, e.g. JSON |
+
 
 ### Technology Stack
+As last step, I have investigated the best Technology to develop what I had in mind. I ended up to develop M3rcury with Python and Flask. Flask is a largely adopted microframework to build web applications. It is well documented (tons of tutorials, book and videos onlines) and well integrated with a large number of extensions to support typical use cases, e.g. web forms, databases, working queue, caching, test automation. Below the M3rcury technology stack.
+
 ###### Front-end
 - Flask-WTF + Bootstrap + Font Awesome for the web pages
 - Flask-Cache for view and function caching
