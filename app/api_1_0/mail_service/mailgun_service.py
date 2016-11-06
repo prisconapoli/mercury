@@ -15,7 +15,7 @@ class MailgunService(MailService):
         MAILGUN_DOMAIN_NAME
         MAILGUN_API_KEY
 
-    All methods are thread safe. All data are passed as arguments.
+    All methods are thread safe. Required data are passed as arguments.
     Only local variable are used. There are no changes in the object status.
     """
 

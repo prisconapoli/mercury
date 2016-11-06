@@ -1,5 +1,4 @@
-# This python helper class is based on the presentation made by Miguel Grinberg
-# at PyCon 2015.
+# This python helper class is based on the presentation made by Miguel Grinberg at PyCon 2015.
 # Available at: https://github.com/lrezende/api-pycon2015-miguel/blob/master/api/decorators.py
 
 import functools

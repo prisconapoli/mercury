@@ -212,7 +212,7 @@ The first step was define a **mail model**, where the process of send an email h
 
 [event_model]: https://github.com/prisconapoli/mercury/blob/master/images/mail_model.jpg
 
-With this model, I've started to investigate what kind of components were required to perform a step.
+With this model, I've started to investigate what kind of components were required to perform these steps.
 - validation can be done in the RESTFul API
 - a dispatcher can choose the mail provider and retry in case of failures
 - a task queue will distribute the load, with the guarantee of built-in persistance
@@ -264,7 +264,7 @@ With the considerations reported before, I have defined the API endpoints and th
 
 
 ### Technology Stack
-As last step, I have investigated the best Technology to develop what I had in mind. I ended up to develop M3rcury with Python and Flask. Flask is a largely adopted microframework to build web applications. It is well documented (tons of tutorials, book and videos onlines) and well integrated with a large number of extensions to support typical use cases, e.g. web forms, databases, working queue, caching, test automation. Below the M3rcury technology stack.
+As last step, I have investigated the best Technology to develop what I had in mind. I ended up to develop M3rcury with Python and Flask. Flask is a largely adopted microframework to build web applications. It is well documented (tons of tutorials, book and videos onlines) and well integrated with a large number of extensions to support typical use cases, e.g. web forms, databases, working queue, caching, test automation. Below the technology stack used in the application.
 
 ###### Front-end
 - Flask-WTF + Bootstrap + Font Awesome for the web pages
@@ -283,3 +283,5 @@ As last step, I have investigated the best Technology to develop what I had in m
 ###### Deployment
 - gunicorn as HTPP Server
 - Heroku as public cloud environment
+
+### Additional note
