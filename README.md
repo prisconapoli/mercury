@@ -71,6 +71,48 @@ If everything is fine, you will be redirect through a new page that contains the
   <img src="https://github.com/prisconapoli/mercury/blob/master/images/accepted.jpg" width="50%"/>
 </p>
 
+You can also use the API (in this example I use httpie as HTTP client):
+Request
+```
+user$  http --json POST https://m3rcury.herokuapp.com/api/v1.0/mails/ sender=mercury@olimpus.com recipient=prisco.napoli@gmail.com subject="You made my day\!" content="Hi Prisco,\r\nm3rcury saved my life\!\r\nI use deliver ..."
+
+```
+Server response
+```
+HTTP/1.1 202 ACCEPTED
+Connection: keep-alive
+Content-Length: 3
+Content-Type: application/json
+Date: Sun, 06 Nov 2016 11:39:41 GMT
+Location: https://m3rcury.herokuapp.com/api/v1.0/mails/36
+Server: gunicorn/19.6.0
+Via: 1.1 vegur
+
+{}
+
+```
+In the HTTP header, there is **Location** which contains the url
+```
+user$ http --json GET https://m3rcury.herokuapp.com/api/v1.0/mails/36
+
+```
+HTTP/1.1 200 OK
+Connection: keep-alive
+Content-Length: 331
+Content-Type: application/json
+Date: Sun, 06 Nov 2016 11:40:23 GMT
+Server: gunicorn/19.6.0
+Via: 1.1 vegur
+
+{
+    "content": "Hi Prisco,\\r\\nm3rcury saved my life\\!\\r\\nI use deliver ...", 
+    "events": "https://m3rcury.herokuapp.com/api/v1.0/mails/36/events/", 
+    "recipient": "prisco.napoli@gmail.com", 
+    "sender": "mercury@olimpus.com", 
+    "subject": "You made my day\\!", 
+    "url": "https://m3rcury.herokuapp.com/api/v1.0/mails/36"
+}
+
 #### Improvements
 If I had more time, I wish to do the following improvements:
 
