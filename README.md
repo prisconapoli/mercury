@@ -119,6 +119,7 @@ Via: 1.1 vegur
     "subject": "You made my day\\!", 
     "url": "https://m3rcury.herokuapp.com/api/v1.0/mails/36"
 }
+```
 
 #### Improvements
 If I had more time, I wish to do the following improvements:
