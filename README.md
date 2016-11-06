@@ -160,12 +160,15 @@ HTTP/1.1 200 OK
 ```
 
 #### Testing
-Make sure that the service is running, then open a separate window and run 
+Make sure that the service is running, then open a separate window and run *test_api.py*
 ```python test_api.py```
 
 Coverage test
-```coverage run test_apy.py```
-```coverage report -m --omit='venv/*'```
+
+```
+coverage run test_apy.py
+coverage report -m --omit='venv/*'
+```
 
 #### Improvements
 If I had more time, I wish to do the following improvements:
@@ -179,12 +182,12 @@ If I had more time, I wish to do the following improvements:
 ##### Things left out
 I had no time to create web pages to track the progress of every request in real time. The idea is collect all the events related to a mail, and show them along with time information and delivery status.
 
-Moreover, my goal was to integrate the coverage test in the manage.py, e.g. 
+Moreover, I was unable to add a command in *manage.py* to run test, e.g. 
 ```
 python manage.py test 
 python manage.py test coverage
 ```
-Flask-Scripts at the moment does not run test with multithread mode enabled.
+This is a limitation of Flask-Scripts which can't run test with multithread mode enabled.
 
 ##### Service limitation
 **Mailgun** requires a list of *Authorized Recipients*. All the emails to Unknown address will be discarded.
@@ -196,35 +199,48 @@ Flask-Scripts at the moment does not run test with multithread mode enabled.
 
 
 ##Architecture
-I have designed M3rcury with the following goals in my mind:
-- availability: accessible across Internet, no service interruptions
-- scalability:  take advantage of additional computational/storage resources, parallel teams of developers
-- reliablility: retry policy, graceful degradation
-- devops friendly: easy to deploy and monitoring
+I have designed M3rcury with the following goals:
+- availability: the service should be accessible across Internet, e.g. RESTful 
+- scalability:  should be easy take advantage of additional computational/storage resources, or have many teams of developers that works on different parts
+- reliablility: define a retry policy in case of failure, handle graceful degradation
+- devops friendly: should be easy deploy and monitoring the status of the system
 - security: allows only secure connections
 
-The first step I've taken was start with the definition of a **mail model**, where the process of sending an email has been described as a series of steps(or events). Look at the image below:
+The first step I've taken was define a **mail model**. The process of sending an email has been described as a series of steps(or events). Look at the image below:
 
 ![alt text][event_model]
 
 [event_model]: https://github.com/prisconapoli/mercury/blob/master/images/mail_model.jpg
 
-The idea was to istribute different the different steps among the application components, e.g. keep the validation insite the RESTFul API, a dispatcher to select the mail provider, a task queue to distribute the load across workers ecc.
+I've started to investigate what kind of components I needed to perform a specific step, e.g. keep the validation inside the RESTFul API, have a dispatcher to select the mail provider, provide a task queue to distribute the load, have separate workers for every service providers.
 
-Moreover, my aim was be able to monitor every decision taken inside the application, and answer questions like below e.g.:
+Moreover, an important requirement for me was to build an *observable* system. 
+It should be possible keep track of every decision taken inside the application, and answer questions:
 - when this email has been receveived?
 - why the email has not been delivered to the recipient? Was a validation failure? Maybe the task queue was down?
-- what are the mail providers choosen by the discpatcher to serve a particular message?
+- what are the mail providers choosen by the dispatcher to serve a particular message?
+- how much time a message stays in the queue?
 - what is the fastest mail provider?
+- what are the failure rates of the mail providers?
 
+After this consideration, I have defined the API endpoints and the database model to store the email and the events:
 
-Starting from this model, I have define the API endpoints and the database model to store the email and the events:
+#### RESTful API
+
+| HTTP Method | URI                                                             | ACTION                 |
+|-------------|-----------------------------------------------------------------|------------------------|
+| GET         | http[s]://[hostname]/api/v1.0/                                  | Retrieve API version and endpoints   |
+| GET         | http[s]://[hostname]/api/v1.0/mails/                            | Retrieve list of mails |
+| POST        | http[s]://[hostname]/api/v1.0/mails/                            | Create a new mail      |
+| GET         | http[s]://[hostname]/api/v1.0/mails/[mail_id]                   | Retrieve a mail        |
+| POST        | http[s]://[hostname]/api/v1.0/mails/[mail_id]/events/           | Create a new event     |
+| GET         | http[s]://[hostname]/api/v1.0/mails/[mail_id]/events/[event_id] | Retrieve an event      |
 
 
 As last step, I have investigated the best tools to develop what I had in my mind. The choice has been develop m3rcury with Python and Flask. Flask is a largely adopted microframework to build web applications. It is well documented (tons of tutorials, book and videos onlines) and well integrated with a large number of extensions to support typical use cases, e.g. web forms, databases, working queue, caching, test automation. 
+Below is described the technological stack.
 
-
-### Tech Stack
+### Technological Stack
 ###### Front-end
 - Flask-WTF + Bootstrap + Font Awesome for the web pages
 - Flask-Cache for view and function caching
