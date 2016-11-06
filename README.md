@@ -21,31 +21,27 @@ In order to increase response time and scalability, the application can be confi
 The front-end consists of two web pages, respectively to submit a new email, and get the links to explore the status information.
 
 #### Installation/deployment
-1. Checkout the git repository
+- Checkout the git repository
 ```
 git clone https://github.com/prisconapoli/mercury
 ```
-
-2. Activate the virtual environment
+- Activate the virtual environment
 ```
 cd mercury
 virtualenv venv
 source venv/bin/activate
 ```
-
-3. Install requirements and database creation
+- Install requirements and database creation
 ```
 pip install -r requirements.txt
 python manage.py createdb
 ```
-
-4. Start Celery and Redis
+- Start Celery and Redis
 ```
 run_redis.h
 run_celery.h
 ```
-
-5. Start the server
+- Start the server
 ```
 python manage.py runserver
 ```
@@ -84,18 +80,11 @@ user$  http --json POST https://m3rcury.herokuapp.com/api/v1.0/mails/ sender=mer
 Server response
 ```
 HTTP/1.1 202 ACCEPTED
-Connection: keep-alive
-Content-Length: 3
-Content-Type: application/json
-Date: Sun, 06 Nov 2016 11:39:41 GMT
 Location: https://m3rcury.herokuapp.com/api/v1.0/mails/36
-Server: gunicorn/19.6.0
-Via: 1.1 vegur
-
 {}
 
 ```
-In the HTTP header, **Location** which contains the url to access the details of the original request
+In the HTTP header, **Location** contains the url to access the details of the original request
 ```
 user$ http --json GET https://m3rcury.herokuapp.com/api/v1.0/mails/36
 
@@ -104,13 +93,6 @@ user$ http --json GET https://m3rcury.herokuapp.com/api/v1.0/mails/36
 Server response
 ```
 HTTP/1.1 200 OK
-Connection: keep-alive
-Content-Length: 331
-Content-Type: application/json
-Date: Sun, 06 Nov 2016 11:40:23 GMT
-Server: gunicorn/19.6.0
-Via: 1.1 vegur
-
 {
     "content": "Hi Prisco,\\r\\nm3rcury saved my life\\!\\r\\nI use deliver ...", 
     "events": "https://m3rcury.herokuapp.com/api/v1.0/mails/36/events/", 
@@ -120,6 +102,40 @@ Via: 1.1 vegur
     "url": "https://m3rcury.herokuapp.com/api/v1.0/mails/36"
 }
 ```
+
+Now you can check all the events
+```
+http --json GET https://m3rcury.herokuapp.com/api/v1.0/mails/36/events/
+```
+Server response
+```
+HTTP/1.1 200 OK
+{
+    "events": [
+        "https://m3rcury.herokuapp.com/api/v1.0/mails/36/events/198", 
+        "https://m3rcury.herokuapp.com/api/v1.0/mails/36/events/199", 
+        "https://m3rcury.herokuapp.com/api/v1.0/mails/36/events/200", 
+        "https://m3rcury.herokuapp.com/api/v1.0/mails/36/events/201", 
+        "https://m3rcury.herokuapp.com/api/v1.0/mails/36/events/202"
+    ], 
+    ...
+}
+```
+If you check the last one (id 202), you will see that the email has been delivered with success (status_code:202) by Sendgrid on 06 Nov 2016 11:39:41 GMT (created_at=1478432381838607104)
+''' 
+user$ http --json GET https://m3rcury.herokuapp.com/api/v1.0/mails/36/events/202
+'''
+Server response
+```
+HTTP/1.1 200 OK
+{
+    "blob": "{\"status_code\": 202}", 
+    "created_at": 1478432381838607104, 
+    "created_by": "Sendgrid:ae2a2271-beb0-4b52-9c8c-4d007a2cd4c4", 
+    "event": "DONE", 
+    "mail_id": 36
+}
+
 
 #### Improvements
 If I had more time, I wish to do the following improvements:
