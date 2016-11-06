@@ -25,22 +25,26 @@ The front-end consists of two web pages, respectively to submit a new email, and
 ```
 git clone https://github.com/prisconapoli/mercury
 ```
+
 2. Activate the virtual environment
 ```
 cd mercury
 virtualenv venv
 source venv/bin/activate
 ```
+
 3. Install requirements and database creation
 ```
 pip install -r requirements.txt
 python manage.py createdb
 ```
+
 4. Start Celery and Redis
 ```
 run_redis.h
 run_celery.h
 ```
+
 5. Start the server
 ```
 python manage.py runserver
@@ -72,7 +76,7 @@ If everything is fine, you will be redirect through a new page that contains the
 </p>
 
 You can also use the API (in this example I use httpie as HTTP client):
-Request
+
 ```
 user$  http --json POST https://m3rcury.herokuapp.com/api/v1.0/mails/ sender=mercury@olimpus.com recipient=prisco.napoli@gmail.com subject="You made my day\!" content="Hi Prisco,\r\nm3rcury saved my life\!\r\nI use deliver ..."
 
@@ -91,10 +95,13 @@ Via: 1.1 vegur
 {}
 
 ```
-In the HTTP header, there is **Location** which contains the url
+In the HTTP header, **Location** which contains the url to access the details of the original request
 ```
 user$ http --json GET https://m3rcury.herokuapp.com/api/v1.0/mails/36
 
+```
+
+Server response
 ```
 HTTP/1.1 200 OK
 Connection: keep-alive
