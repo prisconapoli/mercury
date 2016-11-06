@@ -149,26 +149,49 @@ If I had more time, I wish to do the following improvements:
 - **event-driven system**: replace SQLAlchemy and the task queue with a complete publish subscribe solution, e.g. kafka or kinesis
 - **dynamic dispatching**: introduce different classes of requests (e.g.  text only message, with html, small or large attachment,  multiple recipients) and use separate workers for every class
 - **retry policy**: define a strategy to reprocess or notify the sender the messages accepted by the system but not delivered due a failure of all the mail providers
-- **plans**: define a strategy to analyze and eventually reprocess the messages accepted by the system but not delivered due a failure of all the mail providers
-
 
 ##### Things left out
-I had no time to create web pages to track the progress of every request in real time. The idea is collect all the events related to a mail message, and show them along with time information and delivery status.
+I had no time to create web pages to track the progress of every request in real time. The idea is collect all the events related to a mail, and show them along with time information and delivery status.
 
 ##### Service limitation
 **Mailgun** requires a list of *Authorized Recipients*. All the emails to Unknown address will be discarded.
-**Celery + Redis**: the task queue is disabled on Heroku. It was necessary update the plan. User can test it in the development environment running the scripts in two separate windows:
+**Celery + Redis**: the task queue is disabled on Heroku. It was necessary update to a billable plan. User can test it in the development environment running the scripts in two separate windows:
 ```
     ./run_resis.sh
     ./run_celery.sh
 ```
 
 
-
 ##Architecture
+I have designed M3rcury with the following goals in my mind:
+- availability: accessible across Internet, no service interruptions
+- scalability:  take advantage of additional computational/storage resources, parallel teams of developers
+- reliablility: retry policy, graceful degradation
+- devops friendly: easy to deploy and monitoring
+- security: allows only secure connections
+
+The first step I've taken was start with the definition of a **mail model**, where the process of sending an email has been described as a series of steps(or events). Look at the image below:
+
+![alt text][event_model]
+
+[event_model]: https://github.com/prisconapoli/mercury/blob/master/images/mail_model.jpg
+
+The idea was to istribute different the different steps among the application components, e.g. keep the validation insite the RESTFul API, a dispatcher to select the mail provider, a task queue to distribute the load across workers ecc.
+
+Moreover, my aim was be able to monitor every decision taken inside the application, and answer questions like below e.g.:
+- when this email has been receveived?
+- why the email has not been delivered to the recipient? Was a validation failure? Maybe the task queue was down?
+- what are the mail providers choosen by the discpatcher to serve a particular message?
+- what is the fastest mail provider?
+
+
+Starting from this model, I have define the API endpoints and the database model to store the email and the events:
+
+
+As last step, I have investigated the best tools to develop what I had in my mind. The choice has been develop m3rcury with Python and Flask. Flask is a largely adopted microframework to build web applications. It is well documented (tons of tutorials, book and videos onlines) and well integrated with a large number of extensions to support typical use cases, e.g. web forms, databases, working queue, caching, test automation. 
+
 
 ### Tech Stack
-The application has been developed with Python and Flask. Flask is a largely adopted microframework to build web applications. It is well documented (tons of tutorials, book and videos onlines) and well integrated with a large number of extensions to support typical use cases, e.g. web forms, databases, working queue, caching, test automation. 
 ###### Front-end
 - Flask-WTF + Bootstrap + Font Awesome for the web pages
 - Flask-Cache for view and function caching
@@ -186,20 +209,3 @@ The application has been developed with Python and Flask. Flask is a largely ado
 ###### Deployment
 - gunicorn as HTPP Server
 - Heroku as public cloud environment
-- 
-
-M3rcury has been designed with the following goals:
-- availability: accessible across Internet, no service interruptions
-- scalability:  take advantage of additional computational/storage resources, parallel teams of developers
-- reliablility: retry policy, graceful degradation
-- devops friendly: easy to deploy and monitoring
-- security: allows only secure connections
-
-To achieve these results, the application have been designed using a mail model to represent the processing status of a message.
-
-## Mail model
-The process of send an email can be described as a series of events, where different part of the application are involved. Look at the image below:
-
-![alt text][event_model]
-
-[event_model]: https://github.com/prisconapoli/mercury/blob/master/images/mail_model.jpg
