@@ -62,13 +62,13 @@ python manage.py createdb --force
 The fastest way is use the [live site](https://m3rcury.herokuapp.com). Fill the form and click on *send* button.
 
 <p align="center">
-  <img src="https://github.com/prisconapoli/mercury/blob/master/images/homepage.jpg" width="25%"/>
+  <img src="https://github.com/prisconapoli/mercury/blob/master/images/homepage.jpg" width="50%"/>
 </p>
 
 If everything is fine, you will be redirect through a new page that contains the links to see your request and the processing status:
 
 <p align="center">
-  <img src="https://github.com/prisconapoli/mercury/blob/master/images/accepted.jpg" width="25%"/>
+  <img src="https://github.com/prisconapoli/mercury/blob/master/images/accepted.jpg" width="50%"/>
 </p>
 
 #### Improvements
