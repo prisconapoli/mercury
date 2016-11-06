@@ -71,7 +71,7 @@ If everything is fine, you will be redirect through a new page that contains the
   <img src="https://github.com/prisconapoli/mercury/blob/master/images/accepted.jpg" width="50%"/>
 </p>
 
-You can also use the API (in this example I use httpie as HTTP client):
+You can also use the API (in this example I use httpie as HTTP client. Moreover, in the responses I have reported only the relevant content to keep the response short):
 
 ```
 user$  http --json POST https://m3rcury.herokuapp.com/api/v1.0/mails/ sender=mercury@olimpus.com recipient=prisco.napoli@gmail.com subject="You made my day\!" content="Hi Prisco,\r\nm3rcury saved my life\!\r\nI use deliver ..."
@@ -84,7 +84,7 @@ Location: https://m3rcury.herokuapp.com/api/v1.0/mails/36
 {}
 
 ```
-In the HTTP header, **Location** contains the url to access the details of the original request
+In the HTTP header, **Location** contains the url to get the details of the original request
 ```
 user$ http --json GET https://m3rcury.herokuapp.com/api/v1.0/mails/36
 
@@ -103,7 +103,7 @@ HTTP/1.1 200 OK
 }
 ```
 
-Now you can check all the events
+Now you can check what is the status of the request using the events url
 ```
 http --json GET https://m3rcury.herokuapp.com/api/v1.0/mails/36/events/
 ```
@@ -121,10 +121,13 @@ HTTP/1.1 200 OK
     ...
 }
 ```
-If you check the last one (id 202), you will see that the email has been delivered with success (status_code:202) by Sendgrid on 06 Nov 2016 11:39:41 GMT (created_at=1478432381838607104)
+
+Checking the last event (id=202), you can see the email has been delivered with success (status_code 202) by Sendgrid on 06 Nov 2016 11:39:41 GMT (created_at=1478432381838607104)
+
 ''' 
 user$ http --json GET https://m3rcury.herokuapp.com/api/v1.0/mails/36/events/202
 '''
+
 Server response
 ```
 HTTP/1.1 200 OK
