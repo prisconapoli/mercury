@@ -193,7 +193,7 @@ This is a limitation of Flask-Scripts which can't run test with multithread mode
 **Mailgun** requires a list of *Authorized Recipients*. All the emails to Unknown address will be discarded.
 **Celery + Redis**: the task queue is disabled on Heroku. It was necessary update to a billable plan. User can test it in the development environment running the scripts in two separate windows:
 ```
-    ./run_resis.sh
+    ./run_redis.sh
     ./run_celery.sh
 ```
 
