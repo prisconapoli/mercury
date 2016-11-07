@@ -52,13 +52,17 @@ MAILGUN_API_KEY
 pip install -r requirements.txt
 python manage.py createdb
 ```
-- Open a separate windows to start Redis
+- Open a separate windows, activate the virtual environment and run the script to download and install Redis
 ```
-run_redis.h
+source venv/bin/activate
+./run_redis.h
 ```
-- Open a separate windows to start Celery
+
+
+- Open a separate windows, activate the virtual environment and run the script to start Celery
 ```
-run_celery.h
+source venv/bin/activate
+./run_celery.h
 ```
 
 - Start the server
@@ -66,7 +70,10 @@ run_celery.h
 python manage.py runserver
 ```
 
-To stop the service hit ```CTRL+C```
+By default, the server run on http://localhost:5000
+
+
+To stop, hit ```CTRL+C```
 
 Exit the virtual environment
 ```
