@@ -15,7 +15,7 @@ def get_mail_provider(attempts):
 
     Args:
     attempts (list of str): contains the name of
-    the providers already choosen to process this request
+    the providers already chosen to process this request
     """
 
     if len(attempts):
@@ -30,11 +30,16 @@ class Dispatcher(object):
     Name = 'DISPATCHER'
     @staticmethod
     def dispatch(mail, url_events=None):
-        """Dispatch a mail to a mail providers
+        """Dispatch a mail to a mail service provider
 
         Args:
-        url_events(str): if present, the string represents an url that can be used
-        to log events about this mail
+        mail(Mail): a mail to send
+
+        url_events(str): if present, the string will be used as url to store
+        events about the sending process of the mail
+        
+        If the application has a task queue enabled, the message will be enqueued,
+        otherwise this method will select a mail providers to send the message. 
         """
 
         attempts = []
@@ -61,7 +66,16 @@ class Dispatcher(object):
 
 @queue.task(bind=True, default_retry_delay=5)
 def enqueue(self, mail, attempts=[], url_events=None):
-    """Background task to send an email with one of the mail providers"""
+    """Background task to send an email with one of the mail providers
+
+    Args:
+        mail(Mail): a mail to send
+        attempts(list of str): contains a list of the providers that
+            failed to send the mail
+        url_events(str): if present, the string will be used as url to store
+        events about the sending process of the mail
+        
+    """ 
     
     name = 'CELERY_QUEUE'
     post_event_url(url_events, build_event(created_by=name, \
