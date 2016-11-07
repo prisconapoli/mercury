@@ -280,6 +280,14 @@ Below the models used in SQLAlchemy to track informartion about an email and the
 | blob       | additional information, e.g. JSON |
 
 
+### Dispatcher and retry policy
+The dispatching mechanism is straightforward. Every request carries a list (called attempts) containing the name of previous failed attempts to send the message. An empty list identifies a new request, while a no-empty list identifies a message that has not been dispatched for some reason.
+If is a new message, the mail providers is selected it randomly and the value is added in attempts . However, if the list is not empty, the dispatcher will try to select a new providers that has not been used in the past.
+
+If no providers are available, the dispatcher log a new event 'DISCARDED' and no more attempts are done. 
+
+The choice to store the attempts can seem unusual, but it allows to have many stateless dispatcher in the application. When something goes wrong, the only thing that a dispatcher has to do is check the 'history' of the request to figure out what was wrong.
+
 ### Technology Stack
 As last step, I have investigated the best technologies to develop what I had in mind. I ended up to choose Python and the Flask microframework to build this initial version of M3rcury. Flask has the advantage to be easy to learn and largely adopted to build web applications. It is well documented (tons of tutorials, books and videos on-line) and well integrated with a large number of extensions to support typical use cases, e.g. web forms, databases, working queue, caching, test automation.
 
