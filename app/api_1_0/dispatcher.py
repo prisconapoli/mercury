@@ -25,7 +25,7 @@ def get_mail_provider(attempts):
     else:
         i = random.randrange(0, 1e9)%len(mail_services)
         return (mail_services.keys()[i], mail_services.values()[i])
-    
+
 class Dispatcher(object):
     Name = 'DISPATCHER'
     @staticmethod
