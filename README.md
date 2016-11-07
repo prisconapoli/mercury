@@ -173,6 +173,20 @@ coverage run test_apy.py
 coverage report -m --omit='venv/*'
 ```
 
+#### Profiling
+Run manage.py with the option *profile* to find bottlenecks in the application
+
+```
+python manage.py profile
+```
+
+#### Shell
+Run manage.py with the option *shell* to have access to a Python shell. Is useful to set up the database, cronjobs, and other command-line tasks that belong outside the web application itself.
+
+```
+python manage.py shell
+```
+
 #### Improvements
 If I had more time, I wish to do the following improvements:
 
