@@ -22,6 +22,8 @@ def process_message(caller, mail, service, attempts=[], url_events=None):
     Raise: CircuitBreakerError
     """
     try:
+        if service is None:
+            raise MailServiceNotAvailable()
         circuit_breaker = mail_services[service.name()][1]
         post_event_url(
             url_events,
@@ -49,4 +51,4 @@ def process_message(caller, mail, service, attempts=[], url_events=None):
                     event='DISCARDED',
                     mail_id=mail.id,
                     blob=json.dumps({'info': 'max numbers of attempts'})))
-            raise MailServiceNotAvailable('No mail service available')
+            raise MailServiceNotAvailable('No more mail services available')

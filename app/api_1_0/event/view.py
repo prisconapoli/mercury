@@ -21,7 +21,7 @@ def get_events(id):
 def new_event(id):
     request_data = request.get_json(silent=True)
     if request_data is not None:
-        #Mail.query.get_or_404(id)
+        Mail.query.get_or_404(id)
         event = Event.from_dict(request_data)
         db.session.add(event)
         db.session.flush()

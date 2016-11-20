@@ -177,7 +177,7 @@ The application uses the module *coverage* to run coverage test and generate a r
 
 ```
 coverage run test_api.py
-coverage report -m --omit='venv/*,*config.py,test*.py'
+coverage report -m --omit='venv/*,*config.py,*/queue.py,*test_api.py'
 ```
 
 #### Profiling

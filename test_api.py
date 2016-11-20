@@ -3,6 +3,10 @@ import json
 from app import create_app
 from app import db
 from app.api_1_0.mail.models import Mail
+from app.api_1_0.event.models import Event
+from app.api_1_0.mail_dispatcher.worker import process_message
+from app.api_1_0.mail_dispatcher import mail_services, get_mail_service
+from app.api_1_0.mail_dispatcher.exceptions import Retry, MailServiceNotAvailable
 
 
 class TestApi(unittest.TestCase):
@@ -17,6 +21,12 @@ class TestApi(unittest.TestCase):
         self.base_url = 'http://localhost:5000/api/v1.0/'
         self.sender = 'mercury@olimpus.com'
         self.recipient = 'zeus@olimpus.com'
+        self.message = {
+            'sender': self.sender,
+            'recipient': self.recipient,
+            'subject': 'Story of Circe and Odysseus',
+            'content': 'Then I went back to high Olympus passing over the wooded island...'
+        }
 
     def tearDown(self):
         db.session.remove()
@@ -30,16 +40,11 @@ class TestApi(unittest.TestCase):
         self.assertTrue(response.status_code == 200)
 
     def test_new_email(self):
-        message = {
-            'sender': self.sender,
-            'recipient': self.recipient,
-            'subject': 'Story of Circe and Odysseus',
-            'content': 'Then I went back to high Olympus passing over the wooded island...'
-        }
+
 
         response = self.client.post(
             self.base_url + 'mails/',
-            data=json.dumps(message), headers=self.headers)
+            data=json.dumps(self.message), headers=self.headers)
 
         self.assertTrue(response.status_code == 202)
         location = response.headers.get('Location')
@@ -50,10 +55,10 @@ class TestApi(unittest.TestCase):
             headers=self.headers)
         self.assertTrue(response.status_code == 200)
         mail = json.loads(response.data.decode('utf-8'))
-        self.assertTrue(mail['sender'] == message['sender'])
-        self.assertTrue(mail['recipient'] == message['recipient'])
-        self.assertTrue(mail['subject'] == message['subject'])
-        self.assertTrue(mail['content'] == message['content'])
+        self.assertTrue(mail['sender'] == self.message['sender'])
+        self.assertTrue(mail['recipient'] == self.message['recipient'])
+        self.assertTrue(mail['subject'] == self.message['subject'])
+        self.assertTrue(mail['content'] == self.message['content'])
         self.assertIsNotNone(mail['url'])
 
     def test_mandatory_fields(self):
@@ -150,16 +155,9 @@ class TestApi(unittest.TestCase):
         self.assertTrue(response.status_code == 404)
 
     def test_mail_events(self):
-        message = {
-            'sender': self.sender,
-            'recipient': self.recipient,
-            'subject': 'Story of Circe and Odysseus',
-            'content': 'Then I went back to high Olympus passing over the wooded island...'
-        }
-
         response = self.client.post(
             self.base_url + 'mails/',
-            data=json.dumps(message), headers=self.headers)
+            data=json.dumps(self.message), headers=self.headers)
 
         self.assertTrue(response.status_code == 202)
         location = response.headers.get('Location')
@@ -177,16 +175,9 @@ class TestApi(unittest.TestCase):
         self.assertTrue(response.status_code == 200)
 
     def test_pagination(self):
-        message = {
-            'sender': self.sender,
-            'recipient': self.recipient,
-            'subject': 'Story of Circe and Odysseus',
-            'content': 'Then I went back to high Olympus passing over the wooded island...'
-        }
-
         response = self.client.post(
             self.base_url + 'mails/',
-            data=json.dumps(message), headers=self.headers)
+            data=json.dumps(self.message), headers=self.headers)
 
         self.assertTrue(response.status_code == 202)
         location = response.headers.get('Location')
@@ -202,10 +193,10 @@ class TestApi(unittest.TestCase):
             headers=self.headers)
         self.assertTrue(response.status_code == 200)
         mail = json.loads(response.data.decode('utf-8'))
-        self.assertEqual(mail['sender'], message['sender'])
-        self.assertEqual(mail['recipient'], message['recipient'])
-        self.assertEqual(mail['subject'], message['subject'])
-        self.assertEqual(mail['content'], message['content'])
+        self.assertEqual(mail['sender'], self.message['sender'])
+        self.assertEqual(mail['recipient'], self.message['recipient'])
+        self.assertEqual(mail['subject'], self.message['subject'])
+        self.assertEqual(mail['content'], self.message['content'])
 
         response = self.client.get(
             mail['events'],
@@ -227,6 +218,116 @@ class TestApi(unittest.TestCase):
         self.assertTrue(response.status_code == 200)
         next_url = mail['meta']['next_url']
         self.assertIsNone(next_url)
+
+    def test_sendgrind_worker(self):
+        mail = Mail.from_dict(self.message)
+        attempts = []
+        process_message('test', mail, mail_services['Sendgrid'][0], attempts)
+
+    def test_mailgun_worker(self):
+        mail = Mail.from_dict(self.message)
+        attempts = []
+        self.assertRaises(Retry, process_message,'test', mail, mail_services['Mailgun'][0], attempts)
+
+    def test_mail_service_none(self):
+        mail = Mail.from_dict(self.message)
+        attempts = []
+        self.assertRaises(MailServiceNotAvailable, process_message, 'test', mail, None, attempts)
+
+    def test_mail_service_not_available(self):
+        attempts = []
+        for service in mail_services.keys():
+            attempts.append(service)
+        service = get_mail_service(attempts)
+        self.assertIsNone(service)
+
+    def test_put_event(self):
+        mail = Mail.from_dict(self.message)
+        db.session.add(mail)
+        db.session.flush()
+        db.session.commit()
+
+        event_dict = {
+            'created_at': 12345,
+            'created_by': 'test',
+            'event': 'test',
+            'mail_id': str(mail.id),
+            'blob': "{test : 'test data'}"
+        }
+        event = Event.from_dict(event_dict)
+        db.session.add(event)
+        db.session.flush()
+        db.session.commit()
+        response = self.client.post(
+            self.base_url + 'mails/' + str(mail.id) + '/events/',
+            data=json.dumps(event_dict),
+            headers=self.headers)
+        self.assertTrue(response.status_code == 201)
+
+    def test_get_event(self):
+        mail = Mail.from_dict(self.message)
+        db.session.add(mail)
+        db.session.flush()
+        db.session.commit()
+
+        event_dict = {
+            'created_at': 12345,
+            'created_by': 'test',
+            'event': 'test',
+            'mail_id': str(mail.id),
+            'blob': "{test : 'test data'}"
+        }
+        event = Event.from_dict(event_dict)
+        db.session.add(event)
+        db.session.flush()
+        db.session.commit()
+        response = self.client.get(
+            self.base_url + 'mails/' + str(mail.id) + '/events/' + str(event.id), headers=self.headers)
+        self.assertTrue(response.status_code == 200)
+
+    def test_missing_mail(self):
+        message = {
+            'sender': self.sender,
+            'recipient': self.recipient,
+            'subject': 'Story of Circe and Odysseus',
+            'content': 'Then I went back to high Olympus passing over the wooded island...'
+        }
+
+        mail = Mail.from_dict(message)
+        db.session.add(mail)
+        db.session.flush()
+        db.session.commit()
+        response = self.client.get(self.base_url + 'mails/' + str(mail.id + 1) + '/events/',
+                                   headers=self.headers)
+        self.assertTrue(response.status_code == 404)
+
+    def test_missing_event(self):
+        message = {
+            'sender': self.sender,
+            'recipient': self.recipient,
+            'subject': 'Story of Circe and Odysseus',
+            'content': 'Then I went back to high Olympus passing over the wooded island...'
+        }
+
+        mail = Mail.from_dict(message)
+        db.session.add(mail)
+        db.session.flush()
+        db.session.commit()
+
+        event_dict = {
+            'created_at': 12345,
+            'created_by': 'test',
+            'event': 'test',
+            'mail_id': str(mail.id),
+            'blob': "{test : 'test data'}"
+        }
+        event = Event.from_dict(event_dict)
+        db.session.add(event)
+        db.session.flush()
+        db.session.commit()
+        response = self.client.get(self.base_url + 'mails/' + str(mail.id) + '/events/' + str(event.id+1),
+                                   headers=self.headers)
+        self.assertTrue(response.status_code == 404)
 
 if __name__ == '__main__':
     unittest.main()
