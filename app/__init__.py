@@ -1,19 +1,18 @@
 #!/usr/bin/env python
-from flask import Flask, request, redirect, render_template, session, url_for
-from flask_bootstrap import Bootstrap
+from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 from flask_bootstrap import Bootstrap
-from flask_moment import Moment
 from config import config,Config
 from flask_moment import Moment
 from flask_cache import Cache
 from celery import Celery
 
-bootstrap=Bootstrap()
-db=SQLAlchemy()
-moment=Moment()
-cache=Cache()
-queue=Celery(__name__, broker=Config.CELERY_BROKER_URL)
+bootstrap = Bootstrap()
+db = SQLAlchemy()
+moment = Moment()
+cache = Cache()
+queue = Celery(__name__, broker=Config.CELERY_BROKER_URL)
+
 
 def create_app(config_name):
     app = Flask(__name__)
@@ -28,6 +27,6 @@ def create_app(config_name):
     from .main import main as main_blueprint
     app.register_blueprint(main_blueprint)
 
-    from .api_1_0 import api as api_1_0_blueprint,version
+    from .api_1_0 import api as api_1_0_blueprint, version
     app.register_blueprint(api_1_0_blueprint, url_prefix='/api/'+version)
     return app

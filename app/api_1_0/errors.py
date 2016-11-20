@@ -1,11 +1,13 @@
-from flask import jsonify, render_template
-from .exceptions import ValidationError
+from flask import jsonify
+from .mail_service.exceptions import ValidationError
 from . import api
+
 
 def bad_request(message):
     response = jsonify({'error': 'bad request', 'message': message})
     response.status_code = 400
     return response
+
 
 @api.errorhandler(ValidationError)
 def validation_error(e):
@@ -18,11 +20,13 @@ def page_not_found(e):
     response.status_code = 404
     return response
 
+
 @api.app_errorhandler(400)
-def internal_server_error(e):
+def bad_request(e):
     response = jsonify({'error': 'Bad Request'})
-    response.status_code = 404
+    response.status_code = 400
     return response
+
 
 @api.app_errorhandler(500)
 def internal_server_error(e):

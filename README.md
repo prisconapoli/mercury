@@ -176,8 +176,8 @@ Make sure that http server is running (```python manage.py runserver```), then o
 The application uses the module *coverage* to run coverage test and generate a report
 
 ```
-coverage run test_apy.py
-coverage report -m --omit='venv/*'
+coverage run test_api.py
+coverage report -m --omit='venv/*,*config.py,test*.py'
 ```
 
 #### Profiling

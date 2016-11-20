@@ -3,13 +3,13 @@
 # Available at: https://github.com/lrezende/api-pycon2015-miguel/blob/master/api/decorators.py
 
 import functools
-import hashlib
 from flask import jsonify, request, url_for, current_app, make_response, g
-from .errors import ValidationError
+
 
 def json(f):
     """This decorator generates a JSON response from a Python dictionary or
     a SQLAlchemy model."""
+
     @functools.wraps(f)
     def wrapped(*args, **kwargs):
         rv = f(*args, **kwargs)
@@ -17,7 +17,6 @@ def json(f):
         headers = None
         if isinstance(rv, tuple):
             rv, status_or_headers, headers = rv + (None,) * (3 - len(rv))
-
         if isinstance(status_or_headers, (dict, list)):
             headers, status_or_headers = status_or_headers, None
         
@@ -66,6 +65,7 @@ def collection(model, name=None, max_per_page=10):
     """This decorator implements pagination, filtering, sorting and expanding
     for collections. The expected response from the decorated route is a
     SQLAlchemy query."""
+
     if name is None:
         name = model.__tablename__
 
@@ -117,7 +117,7 @@ def collection(model, name=None, max_per_page=10):
             if expand:
                 items = [item.export_data() for item in p.items]
             else:
-                items = [item.get_url() for item in p.items]
+                items = [item.url() for item in p.items]
             return {name: items, 'meta': pages}
         return wrapped
     return decorator

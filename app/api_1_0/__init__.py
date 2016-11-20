@@ -1,10 +1,10 @@
 from flask import Blueprint, url_for
-
 api = Blueprint('api', __name__)
 version = 'v1.0'
 
-from . import mail, event, errors, exceptions,utils
+from . import mail, event, errors, utils
 from .decorators import json
+
 
 def endpoints():
     """Get the main endpoints for the RESTful API """
