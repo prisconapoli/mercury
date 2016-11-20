@@ -1,3 +1,4 @@
+#!/usr/bin/env python
 import unittest
 import json
 from app import create_app
@@ -40,8 +41,6 @@ class TestApi(unittest.TestCase):
         self.assertTrue(response.status_code == 200)
 
     def test_new_email(self):
-
-
         response = self.client.post(
             self.base_url + 'mails/',
             data=json.dumps(self.message), headers=self.headers)
