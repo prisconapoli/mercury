@@ -101,13 +101,15 @@ If the mail is accepted, the user will be redirect through a new page that conta
 M3rcury can accept request throught the RESTful API. The examples below use **httpie** as HTTP client( note: the output of the responses have been  truncated, only the relevant content for the discsussion is present):
 
 ```
-
+user$  http --json POST https://m3rcury.herokuapp.com/api/v1.0/mails/ sender=mercury@olimpus.com recipient=prisco.napoli@gmail.c
+om subject="You made my day\!" content="Hi Prisco,\r\nm3rcury saved my life\!\r\nI use deliver ..."
 
 ```
 Server response
 ```
 HTTP/1.1 202 ACCEPTED
 Location: https://m3rcury.herokuapp.com/api/v1.0/mails/36
+MailId: 36
 {}
 
 ```
@@ -177,7 +179,7 @@ The application uses the module *coverage* to run coverage test and generate a r
 
 ```
 coverage run test_api.py
-coverage report -m --omit='venv/*,*config.py,*/queue.py,*test_api.py'
+coverage report -m --omit='venv/*,*config.py,test_api.py,*view.py,*views.py'
 ```
 
 #### Profiling

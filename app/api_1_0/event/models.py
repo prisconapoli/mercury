@@ -24,6 +24,7 @@ class Event(db.Model):
         """ Return a Python dictionary representation of this object."""
 
         dict_event = {
+            'id': self.id,
             'created_at': self._created_at,
             'created_by': self._created_by,
             'event': self._event,

@@ -2,20 +2,18 @@
 {% import "bootstrap/wtf.html" as wtf %}
 {% block title %}M3rcury - Sent{% endblock %}
 {% block page_content %}
-<section id="confi,">
+<section id="confirm">
     <div class="heading text-center">
-        <img src="{{ url_for('static', filename = 'images/logo.png') }}" width="200" height="85">
+        <img src="{{ url_for('static', filename='images/logo.png') }}" width="200" height="85">
         <h1>Wow!</h1>
         <p>
             <h2>Mail Accepted</h2>
             <br/>
-            Check the links below to get a summary  of the message or track the status of your request
+            Check the links below for more information
             <br/>
-            <b>Summary</b>
-            <a href='{{ location }}'> {{ location }} </a>
+            <h3><a href="{{ url_for('main.mail_details', id=mail_id) }}">Details</a></h3>
             <br/>
-            <b>Status</b>
-            <a href='{{ location }}/events'> {{ location }}/events </a>
+            <h3><a href="{{ url_for('main.events_details', id=mail_id) }}">Status</a></h3>
         </p>
     </div>
     {{ Location }}

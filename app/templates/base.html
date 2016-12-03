@@ -12,6 +12,8 @@
 {% block styles -%}
 {{super()}}
 <link href="//netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.min.css" rel="stylesheet">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/main.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/bootstrap-social.css') }}">
 {% endblock styles %}
 
 
@@ -55,7 +57,7 @@
 <section id="about" class="secPad">
   <div class="container">
   </div>
-</section>          
+</section>
 {%- block footer %}
 <footer>
   <br/>
@@ -66,7 +68,7 @@
     <div class="social text-center">
       <a href="https://plus.google.com/105302638507040399054"><i class="fa fa-google-plus fa-2x"></i></a>
       <a href="http://ie.linkedin.com/in/prisconapoli"><i class="fa fa-linkedin fa-2x" ></i></a>
-      <a href="https://github.com/prisconapoli"><i class="fa fa-github fa-2x"></i></a>                
+      <a href="https://github.com/prisconapoli"><i class="fa fa-github fa-2x"></i></a>
       <a href="http://stackoverflow.com/users/2558324/prisco-napoli"><i class="fa fa-stack-overflow 2x"></i></a>
     </div>
   </section>

@@ -3,8 +3,6 @@ from flask import url_for
 from ..utils import get_or_error
 from ..mail_service.exceptions import ValidationError
 from ... import db
-from ..utils import post_event, build_event
-from sqlalchemy import event
 
 
 class Mail(db.Model):
@@ -18,7 +16,7 @@ class Mail(db.Model):
     __tablename__ = 'mails'
     id = db.Column(db.Integer, primary_key=True)
     _sender = db.Column(db.String)
-    _recipient = db.Column(db.String)
+    _recipients = db.Column(db.String)
     _subject = db.Column(db.String, default='')
     _content = db.Column(db.Text, default='')
     _events = db.relationship('Event', backref='mail', lazy='dynamic')
@@ -27,7 +25,7 @@ class Mail(db.Model):
         return self._sender
 
     def recipients(self):
-        return self._recipient.split()
+        return self._recipients.split()
 
     def subject(self):
         return self._subject
@@ -45,11 +43,12 @@ class Mail(db.Model):
         """ Return a Python dictionary representation of this object."""
 
         dict_mail = {
-            'url': url_for('api.get_mail', id=self.id, _external=True),
+            'id': self.id,
             'sender': self._sender,
-            'recipient': self._recipient,
+            'recipients': self._recipients,
             'subject': self._subject,
             'content': self._content,
+            'url': url_for('api.get_mail', id=self.id, _external=True),
             'events': url_for('api.get_events', id=self.id, _external=True),
         }
         return dict_mail
@@ -68,12 +67,12 @@ class Mail(db.Model):
         if len(self._sender) > Mail.MaxSenderLen:
             raise ValidationError('Maximum allowed size for sender is: %s' % Mail.MaxSenderLen)
 
-        recipients = self._recipient.split()
+        recipients = self._recipients.split()
         for recipient in recipients:
             if not validate_email(recipient):
                 raise ValidationError('Invalid recipient address:%s' % recipient)
 
-        if len(self._recipient) > Mail.MaxRecipientLen:
+        if len(self._recipients) > Mail.MaxRecipientLen:
             raise ValidationError('Maximum allowed size for recipient is: %s' % Mail.MaxRecipientLen)
 
         if len(self._subject) and len(self._subject) > Mail.MaxSubjectLen:
@@ -87,8 +86,8 @@ class Mail(db.Model):
         """ Create a new object from a dictionary. """
 
         sender = get_or_error(dict_mail, 'sender')
-        recipient = get_or_error(dict_mail, 'recipient')
+        recipients = get_or_error(dict_mail, 'recipients')
         subject = get_or_error(dict_mail, 'subject', nullable=True)
         content = get_or_error(dict_mail, 'content', nullable=True)
-        return Mail(_sender=sender, _recipient=recipient, _subject=subject, _content=content)
+        return Mail(_sender=sender, _recipients=recipients, _subject=subject, _content=content)
 

@@ -1,0 +1,12 @@
+{% extends "base.html" %}
+{% import "bootstrap/wtf.html" as wtf %}
+{% block title %}M3rcury - Mail Details{% endblock %}
+{% block page_content %}
+<section id="details">
+    <div class="heading text-center">
+        <img src="{{ url_for('static', filename = 'images/logo.png') }}" width="200" height="85">
+        <h1>Mail details</h1>
+        {{ wtf.quick_form(form) }}
+    </div>
+</section>
+{% endblock %}

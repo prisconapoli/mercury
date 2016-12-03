@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+{% import "bootstrap/wtf.html" as wtf %}
+{% block title %}M3rcury - Events Details{% endblock %}
+{% block page_content %}
+<section id="details">
+    <div class="heading text-center">
+        <img src="{{ url_for('static', filename = 'images/logo.png') }}" width="200" height="85">
+        <h1>Events</h1>
+        {% for event in events %}
+            {% set list = event.split('/') %}
+            {% set mail_id = list[-3] %}
+            {% set event_id = list[-1] %}
+            <li><a href='{{ url_for('main.event_detail', mail_id=mail_id, event_id=event_id) }}'>{{ event }}</a></li>
+        {% endfor %}
+
+    </div>
+</section>
+{% endblock %}

@@ -21,10 +21,10 @@ class TestApi(unittest.TestCase):
         self.headers = {'Content-Type': 'application/json'}
         self.base_url = 'http://localhost:5000/api/v1.0/'
         self.sender = 'mercury@olimpus.com'
-        self.recipient = 'zeus@olimpus.com'
+        self.recipients = 'zeus@olimpus.com'
         self.message = {
             'sender': self.sender,
-            'recipient': self.recipient,
+            'recipients': self.recipients,
             'subject': 'Story of Circe and Odysseus',
             'content': 'Then I went back to high Olympus passing over the wooded island...'
         }
@@ -55,7 +55,7 @@ class TestApi(unittest.TestCase):
         self.assertTrue(response.status_code == 200)
         mail = json.loads(response.data.decode('utf-8'))
         self.assertTrue(mail['sender'] == self.message['sender'])
-        self.assertTrue(mail['recipient'] == self.message['recipient'])
+        self.assertTrue(mail['recipients'] == self.message['recipients'])
         self.assertTrue(mail['subject'] == self.message['subject'])
         self.assertTrue(mail['content'] == self.message['content'])
         self.assertIsNotNone(mail['url'])
@@ -63,14 +63,14 @@ class TestApi(unittest.TestCase):
     def test_mandatory_fields(self):
         message1 = {
             'sender': '',
-            'recipient': 'prisco.napoli@gmail.com',
+            'recipients': 'prisco.napoli@gmail.com',
             'subject': 'subject',
             'content': 'content'
         }
 
         message2 = {
             'sender': 'prisco.napoli@gmail.com',
-            'recipient': '',
+            'recipients': '',
             'subject': 'subject',
             'content': 'content'
         }
@@ -104,7 +104,7 @@ class TestApi(unittest.TestCase):
         recipient = 'a' * (Mail.MaxRecipientLen + 1)
         message = {
             'sender': self.sender,
-            'recipient': recipient,
+            'recipients': recipient,
             'subject': 'subject',
             'content': 'content'
         }
@@ -123,7 +123,7 @@ class TestApi(unittest.TestCase):
         subject = 'a' * (Mail.MaxSubjectLen + 1)
         message = {
             'sender': self.sender,
-            'recipient': self.recipient,
+            'recipients': self.recipients,
             'subject': subject,
             'content': 'content'
         }
@@ -137,7 +137,7 @@ class TestApi(unittest.TestCase):
         content = 'a' * (Mail.MaxContentLen + 1)
         message4 = {
             'sender': self.sender,
-            'recipient': self.recipient,
+            'recipients': self.recipients,
             'subject': 'subject',
             'content': content
         }
@@ -193,7 +193,7 @@ class TestApi(unittest.TestCase):
         self.assertTrue(response.status_code == 200)
         mail = json.loads(response.data.decode('utf-8'))
         self.assertEqual(mail['sender'], self.message['sender'])
-        self.assertEqual(mail['recipient'], self.message['recipient'])
+        self.assertEqual(mail['recipients'], self.message['recipients'])
         self.assertEqual(mail['subject'], self.message['subject'])
         self.assertEqual(mail['content'], self.message['content'])
 
@@ -287,7 +287,7 @@ class TestApi(unittest.TestCase):
     def test_missing_mail(self):
         message = {
             'sender': self.sender,
-            'recipient': self.recipient,
+            'recipients': self.recipients,
             'subject': 'Story of Circe and Odysseus',
             'content': 'Then I went back to high Olympus passing over the wooded island...'
         }
@@ -303,7 +303,7 @@ class TestApi(unittest.TestCase):
     def test_missing_event(self):
         message = {
             'sender': self.sender,
-            'recipient': self.recipient,
+            'recipients': self.recipients,
             'subject': 'Story of Circe and Odysseus',
             'content': 'Then I went back to high Olympus passing over the wooded island...'
         }

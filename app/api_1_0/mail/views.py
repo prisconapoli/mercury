@@ -42,11 +42,10 @@ def new_mail():
             raise e
 
         post_event('api.new_event', mail.id, build_event(created_by=name, event='ACCEPTED', mail_id=mail.id))
-        url_events = None if not current_app.config['TRACK_EVENTS'] else url_for('api.new_event',
-                                                                                id=mail.id, _external=True)
+        url_events = None if not current_app.config['TRACK_EVENTS'] else url_for('api.new_event', id=mail.id, _external=True)
 
         Dispatcher.dispatch(mail, url_events)
-        return {}, 202, {'Location': mail.url()}
+        return {}, 202, {'Location': mail.url(), 'MailId': mail.id}
     else:
         abort(400)
 
