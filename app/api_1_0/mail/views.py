@@ -51,7 +51,7 @@ def new_mail():
 
 
 @api.route('/mails/<int:id>', methods=['GET'])
-@cache.cached(timeout=120)
+@cache.memoize(timeout=120)
 @jasonify
 def get_mail(id):
     return Mail.query.get_or_404(id)

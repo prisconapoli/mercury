@@ -2,8 +2,11 @@ from flask import render_template, redirect
 from .forms import SendMailForm, MailForm, EventForm
 from . import main
 from ..api_1_0.mail.views import *
+from .. import cache
+
 import json
 import requests
+
 
 headers = {'Content-Type': 'application/json'}
 
@@ -37,6 +40,7 @@ def confirm():
 
 
 @main.route('/details/mails/<int:id>', methods=['GET'])
+@cache.memoize(timeout=120)
 def mail_details(id):
     response = requests.get(url_for('api.get_mail', id=id, _external=True), headers=headers)
     if response.ok:
@@ -51,6 +55,7 @@ def mail_details(id):
 
 
 @main.route('/details/mails/<int:id>/events/', methods=['GET'])
+#@cache.memoize(timeout=10)
 def events_details(id):
     response = requests.get(url_for('api.get_events', id=id, _external=True), headers=headers)
     if response.ok:
@@ -60,6 +65,7 @@ def events_details(id):
 
 
 @main.route('/details/mails/<int:mail_id>/events/<int:event_id>', methods=['GET'])
+@cache.memoize(timeout=120)
 def event_detail(mail_id, event_id):
     response = requests.get(url_for('api.get_event', mail_id=mail_id, event_id=event_id, _external=True),
                             headers=headers)

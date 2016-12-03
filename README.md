@@ -4,8 +4,8 @@
 
 # M3rcury Email Service
 
-The M3rcury project presents a solution for the [Uber© Email Service](https://github.com/uber/coding-challenge-tools/blob/master/coding_challenge.md) coding challenge. The challenge consists in design and develop a email service that accepts the necessary information from the users and sends emails.
-To provide service availability, the service uses internally two email service providers.
+M3rcury project presents a solution for the [Uber© Email Service](https://github.com/uber/coding-challenge-tools/blob/master/coding_challenge.md) coding challenge. The challenge consists in design and develop a reliable and fault tolerant mail service able to
+send users' emails. To guarantee service availability, we use two external mail service providers.
 
 
 Live on [Heroku](https://m3rcury.herokuapp.com).
@@ -15,12 +15,13 @@ Check my [profile](http://ie.linkedin.com/in/prisconapoli)
 ## Overview
 
 M3rcury is a back-end application. The service is exposed through a RESTful API compliant with the Internet protocols HTTP and JSON.
-There is also a minimal front-end, to make easy for the average users send a mail filling a form in the [live site](https://m3rcury.herokuapp.com).
+There is also a simple front-end, in order to allow the users to send messages filling a web form in the [live site](https://m3rcury.herokuapp.com).
 
-The backend validates and dispatch the email received throught the RESTful API, keeps track of the status of every message processed and implements a retry policy in case of failures. [Mailgun](https://sendgrid.com) and [Sendgrid](https://sendgrid.com) are the email service providers.
-In order to increase th eresponse time and the scalability of the system, the application can be configured to use a task queue to distribute the load across the workers.
+The backend validates and dispatch the email received through the RESTful API, keeps track of the status of every message processed and implements a retry policy in case of failures. [Mailgun](https://sendgrid.com) and [Sendgrid](https://sendgrid.com) are the email service providers.
+The system uses a task queue to distribute the load across the workers to guaranteed load distribution when the number of the incoming requests increases.
 
-The frontend is minimal, it consists of two web pages, respectively to submit a new email, and get the links to explore the status information. The next step will be add real-time views and a better CSS.
+The frontend is made of static web pages which enable the submission of  new messages and retrieve the status information.
+The next step will be add real-time views and a better CSS.
 
 #### Installation/deployment
 - Checkout the git repository
@@ -185,12 +186,10 @@ coverage report -m --omit='venv/*,*config.py,test_api.py,*view.py,*views.py'
 #### Profiling
 Run manage.py with the option *profile* to find bottlenecks in the application
 
-```
-python manage.py profile
-```
+``` python manage.py profile ```
 
 #### Shell
-Run manage.py with the option *shell* to have access to a Python shell. Is useful to set up the database, cronjobs, and other command-line tasks that belong outside the web application itself.
+Lunch  ```manage.py``` with the option *shell* to have access to a Python shell. Is useful to set up the database, cronjobs, and other command-line tasks that belong outside the web application itself.
 
 ```
 python manage.py shell
@@ -201,14 +200,14 @@ If I had more time, I wish to do the following improvements:
 
 - **email**: add support for cc,bcc, html content, small attachment (e.g. up to 5 MB), jumbo mail (e.g. with dropbox or google drive integration)
 - **real-time views**: track the mail status in real-time, monitor the average load of the system, arrival rate, average processing time, spending time in the queue
-- **event-driven system**: replace SQLAlchemy and the task queue with a complete publish subscribe solution, e.g. kafka or AWS Kinesis
+- **event-driven system**: replace SQLAlchemy and the task queue with a complete publish subscribe solution, e.g. kafka
 - **dynamic dispatching**: introduce different classes of requests (e.g.  text only message, with html, small or large attachment,  multiple recipients) and have different pool of workers dedicated to each class
 - **retry policy**: define a strategy to allow the user to reprocess a messages accepted by the system but not delivered due a failure of all the mail providers, e.g. bad recipient address
 
 #### Things left out
-Due lack of time I didn't create the web pages to track the progress of every request in real time. The idea is collect all the events related to a mail, and show them along with time information and delivery status. It can be done in AJAX and the flask extension Flask-SocketIO.
+Due lack of time I didn't create dynamic web pages to track the progress of every request in real time. The idea is collect all the events related to a mail, and show them along with time information and delivery status. It can be done in AJAX and the flask extension Flask-SocketIO.
 
-Moreover, I was unable to add a command in *manage.py* to exectue the test, e.g. 
+Moreover, I was unable to add a command in *manage.py* to execute the test, e.g.
 ```
 python manage.py test 
 python manage.py test coverage
@@ -216,7 +215,7 @@ python manage.py test coverage
 This is a limitation of Flask-Scripts which can't run the test with multithread mode enabled.
 
 #### Service limitation
-**Mailgun** requires a list of *Authorized Recipients*. All the emails to Unknown address will be discarded.
+**Mailgun** requires a list of *Authorized Recipients*. All the emails to *Unknown address* will be discarded.
 **Celery + Redis**: the task queue is disabled on Heroku. It was necessary update to a billable plan. User can test it in the development environment running the scripts in two separate windows:
 ```
     ./run_redis.sh
@@ -228,31 +227,31 @@ This is a limitation of Flask-Scripts which can't run the test with multithread 
 I have designed M3rcury with the following goals:
 - availability: the service should be accessible across Internet, e.g. RESTful API, HTTP + JSON
 - scalability:  should be easy take advantage of additional computational/storage resources, or have many teams of developers that works on different parts of the application
-- reliablility: define a retry policy in case of failures, handle graceful degradation
-- devops friendly: should be easy deploy and monitoring the status of the application
+- reliability: define a retry policy in case of failures, handle graceful degradation
+- operational friendly: should be easy deploy and monitoring the status of the application
 - security: allows connections over https, don't expose private keys
 
-The first step was define a **mail sending model**, where the process of send an email has been split in a series of steps(or events). Look at the image below:
+As first step I defined a model for to describe the process of **send an email**:
 
 ![alt text][mail_sending_model]
 
 [mail_sending_model]: https://github.com/prisconapoli/mercury/blob/master/images/mail_model.jpg
 
-With this model, I've started to investigate what kind of components were required to perform these steps:
-- validation can be done in the RESTFul API
+With this model, I moved towards a scratch description of the components required for each steps:
+- validation can be done by the RESTFul API
 - a dispatcher can select the mail provider and retry in case of failures
-- a task queue can be used to distribute the load, but we need guarantee the built-in persistance
-- is better to have indipendent workers for every mail service providers, hopefully with many accounts
+- a task queue can be used to distribute the load, but we need guarantee the built-in persistency
+- will be nice have many workers for different mail service providers, hopefully with many accounts
 
 An important goal was design an *observable* system. Basically, it should be possible keep track of every decision taken inside the application, and answer questions like:
-- when this email entered the system? How much time it taken to delivery it?
+- when this email entered the system? How much time taken to delivery it?
 - why the email has not been delivered to the recipient? Was a validation failure? Maybe the task queue was down?
-- what are the mail providers choosen by the dispatcher to serve a particular message?
+- what are the mail providers choosed by the dispatcher to serve a particular message?
 - what is the average time spent in the queue?
 - what is the fastest mail provider?
 - what are the failure rates of the mail providers?
 
-So my decision was include in the API interface also the functionalities to store and retrieve the events for a particular message.
+So my decision was include in the API interface the endpoints to store and retrieve the events for a particular message.
 
 #### RESTful API
 
@@ -266,14 +265,14 @@ So my decision was include in the API interface also the functionalities to stor
 | GET         | http[s]://[hostname]/api/v1.0/mails/[mail_id]/events/[event_id] | Retrieve an event      |
 
 
-Below the models used in SQLAlchemy to track informartion about an email and the correlated events:
+Below the models used in SQLAlchemy to track the mail details and the corresponding events:
 
 #### Mail Model
 | field     | description            |
 |-----------|------------------------|
 | id        | unique identifier      |
 | sender    | sender address         |
-| recipient | recipient address      |
+| recipients | recipients address      |
 | subject   | subject of the message |
 | content   | message content        |
 | events    | link to events         |
@@ -290,15 +289,17 @@ Below the models used in SQLAlchemy to track informartion about an email and the
 
 
 ### Dispatcher and retry policy
-The dispatching mechanism is straightforward. Every request carries a list (called attempts) containing the name of previous failed attempts to send the message. An empty list identifies a new request, while a no-empty list identifies a message that has not been dispatched for some reason.
-If is a new message, the mail providers is selected it randomly and the value is added in attempts . However, if the list is not empty, the dispatcher will try to select a new providers that has not been used in the past.
+The dispatching mechanism is straightforward. Every request carries a list (called attempts) containing the name of all the mail services that have failed to send the message. An empty list identifies a new request, while a no-empty list identifies a message that has not been dispatched for some reason.
+If is a new message, the mail providers is selected randomly and the value is added in attempts. However, if the list is not empty, the dispatcher will try to select a new providers that has not been used in the past.
+Every mail service is wrapped around a circuit breaker object, which monitors for failures. In this way, the dispatching will not try
+select a broken provider, e.g. network connection, wrong credentials.
 
-If no providers are available, the dispatcher log a new event 'DISCARDED' and no more attempts are done. 
+If a provider is not available to serve the current request, the dispatcher log a new event 'DISCARDED' and no more attempts are done.
 
-The choice to store the attempts can seem unusual, but it allows to have many stateless dispatcher in the application. When something goes wrong, the only thing that a dispatcher has to do is check the 'history' of the request to figure out what was wrong.
+The choice to store with the request also the list of the past attempts has a cost of space and bytes sent over the network, but it allows to have many stateless dispatcher in the application. When something goes wrong, the only thing that a dispatcher has to do is check the 'history' of the request to figure out what was wrong.
 
 ### Technology Stack
-As last step, I have investigated the best technologies to develop what I had in mind. I ended up to choose Python and the Flask microframework to build this initial version of M3rcury. Flask has the advantage to be easy to learn and largely adopted to build web applications. It is well documented (tons of tutorials, books and videos on-line) and well integrated with a large number of extensions to support typical use cases, e.g. web forms, databases, working queue, caching, test automation.
+I investigated different technologies to develop what I had in mind. I ended up to choose Python and the Flask microframework to build this initial version of M3rcury. Flask has the advantage to be easy to learn and largely adopted to build web applications. It is well documented (tons of tutorials, books and videos on-line) and well integrated with a large number of extensions to support typical use cases, e.g. web forms, databases, working queue, caching, test automation.
 
 Below is described the final technology stack:
 
@@ -311,14 +312,16 @@ Below is described the final technology stack:
 - SQLAlchemy (SQLite for development and testing, Postgres in production) to store mails and events
 - Celery + Redis for asynchronous task queue and built-in persistence
 - SendGrid + Mailgun as service providers
+- Circuit Breaker as service wrapper
+- Flask-Cache for view and function caching
 
 ###### Testing and Automation:
 - Flask-Script extension for automated tasks: database creation, start the service, profiling
 - Test automation, coverage tests, reports
 
 ###### Deployment
-- gunicorn as HTPP Server
+- gunicorn as HTTP Server
 - Heroku as public cloud environment
 
 ### Additional note
-If you wish to have a new feauture, collaborate on this project,  or just report a bug, please drop me a message with [LinkedIn](http://ie.linkedin.com/in/prisconapoli)
+If you wish to have a new feature, collaborate on this project,  or just report a bug, please contact me at [LinkedIn](http://ie.linkedin.com/in/prisconapoli)

@@ -7,9 +7,9 @@ from ... import db
 from ... import cache
 
 
-@api.route('/mails/<int:id>/events/')
+@api.route('/mails/<int:id>/events/', methods=['GET'])
 @json
-@cache.cached(timeout=10)
+@cache.memoize(timeout=10)
 @collection(Event)
 def get_events(id):
     mail = Mail.query.get_or_404(id)
@@ -31,9 +31,9 @@ def new_event(id):
         abort(400)
 
 
-@api.route('/mails/<int:mail_id>/events/<int:event_id>')
+@api.route('/mails/<int:mail_id>/events/<int:event_id>', methods=['GET'])
 @json
-@cache.cached(timeout=120)
+@cache.memoize(timeout=120)
 def get_event(mail_id, event_id):
     event = Event.query.get_or_404(event_id)
     if event.mail_id() == mail_id:

@@ -10,7 +10,8 @@
             {% set list = event.split('/') %}
             {% set mail_id = list[-3] %}
             {% set event_id = list[-1] %}
-            <li><a href='{{ url_for('main.event_detail', mail_id=mail_id, event_id=event_id) }}'>{{ event }}</a></li>
+            {% set url = url_for('main.event_detail', mail_id=mail_id, event_id=event_id, _external=True) %}
+            <li><a href={{ url }}>Event id: {{ event_id }}</a></li>
         {% endfor %}
 
     </div>
