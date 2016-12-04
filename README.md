@@ -257,10 +257,11 @@ So my decision was include in the API interface the endpoints to store and retri
 
 | HTTP Method | URI                                                             | ACTION                 |
 |-------------|-----------------------------------------------------------------|------------------------|
-| GET         | http[s]://[hostname]/api/v1.0/                                  | Retrieve API version and endpoints   |
-| GET         | http[s]://[hostname]/api/v1.0/mails/                            | Retrieve list of mails |
+| GET         | http[s]://[hostname]/api/v1.0/                                  | Retrieve the API version and endpoints   |
+| GET         | http[s]://[hostname]/api/v1.0/mails/                            | Retrieve the collection of all the email |
 | POST        | http[s]://[hostname]/api/v1.0/mails/                            | Create a new mail      |
 | GET         | http[s]://[hostname]/api/v1.0/mails/[mail_id]                   | Retrieve a mail        |
+| GET         | http[s]://[hostname]/api/v1.0/mails/[mail_id]/events/           | Retrieve the collection of events by email     |
 | POST        | http[s]://[hostname]/api/v1.0/mails/[mail_id]/events/           | Create a new event     |
 | GET         | http[s]://[hostname]/api/v1.0/mails/[mail_id]/events/[event_id] | Retrieve an event      |
 
