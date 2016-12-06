@@ -108,20 +108,12 @@ class MailService(object):
                     blob=json.dumps(details)))
             return True
 
-        post_event_url(
-            url_events,
-            build_event(
-                created_by=self.full_name(),
-                event='FAILURE',
-                mail_id=mail.id,
-                blob=json.dumps(self.details)))
-
         if details['status_code'] == 400:
-            raise ValidationError(*details)
+            raise ValidationError(details)
         elif details['status_code'] == 401:
-            raise InvalidKey(*details)
+            raise InvalidKey(details)
         elif details['status_code'] == 402:
-            raise PaymentRequired(*details)
+            raise PaymentRequired(details)
         else:
             raise MailServiceException(*details)
 
