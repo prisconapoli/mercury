@@ -34,7 +34,7 @@ def new_mail():
         post_event('api.new_event',
                     mail.id, build_event(created_by=name, event='NEW', mail_id=mail.id))
         try:
-           mail.validate_email()
+            mail.validate_email()
         except ValidationError, e:
             post_event(
                'api.new_event', mail.id,
