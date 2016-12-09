@@ -1,5 +1,5 @@
 from ..utils import post_event_url, build_event
-from . import mail_services
+from . import service_registry
 from exceptions import Retry, MailServiceNotAvailable
 from pybreaker import CircuitBreakerError
 from ..mail_service.exceptions import *
@@ -24,7 +24,7 @@ def process_message(caller, mail, service, attempts=[], url_events=None):
     try:
         if service is None:
             raise MailServiceNotAvailable()
-        circuit_breaker = mail_services[service.name()][1]
+        circuit_breaker = service_registry[service.name()][1]
         post_event_url(
             url_events,
             build_event(created_by=caller,
@@ -34,7 +34,7 @@ def process_message(caller, mail, service, attempts=[], url_events=None):
         circuit_breaker.call(service.send, mail, url_events)
     except (CircuitBreakerError, MailServiceException, NetworkConnectionError) as ex:
         attempts.append(service.name())
-        if len(attempts) < len(mail_services):
+        if len(attempts) < len(service_registry):
             post_event_url(
                 url_events,
                 build_event(

@@ -9,8 +9,8 @@ from .decorators import json
 def endpoints():
     """Get the main endpoints for the RESTful API """
     return {
-        'Retrieve the collection of all the email [GET]': url_for('api.get_mails', external=True),
-        'Create a new email [POST]': url_for('api.new_mail', external=True)
+        'Retrieve the collection of all the email [GET]': url_for('api.get_mails', _external=True),
+        'Create a new email [POST]': url_for('api.new_mail', _external=True)
     }
 
 

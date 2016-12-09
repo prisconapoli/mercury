@@ -9,7 +9,7 @@ sendgrid = SendgridService()
 cb_mailgun = pybreaker.CircuitBreaker(fail_max=5, reset_timeout=60, exclude=[ValidationError])
 cb_sendgrind = pybreaker.CircuitBreaker(fail_max=5, reset_timeout=60, exclude=[ValidationError])
 
-mail_services = {
+service_registry = {
     mailgun.name(): (mailgun, cb_mailgun),
     sendgrid.name(): (sendgrid, cb_sendgrind)
 }
@@ -30,9 +30,9 @@ def get_mail_service(attempts):
         MailService: a mail service object, otherwise None
     """
 
-    candidate_services = [s for s in mail_services.keys() if s not in attempts]
-    if len(candidate_services) is 0:
+    available_services = [service for service in service_registry.keys() if service not in attempts]
+    if len(available_services) is 0:
         return None
 
-    i = random.randrange(0, 100)%len(candidate_services)
-    return mail_services[candidate_services[i]][0]
+    i = random.randrange(0, 100) % len(available_services)
+    return service_registry[available_services[i]][0]

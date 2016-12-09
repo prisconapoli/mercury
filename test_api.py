@@ -6,7 +6,7 @@ from app import db
 from app.api_1_0.mail.models import Mail
 from app.api_1_0.event.models import Event
 from app.api_1_0.mail_dispatcher.worker import process_message
-from app.api_1_0.mail_dispatcher import mail_services, get_mail_service
+from app.api_1_0.mail_dispatcher import service_registry, get_mail_service
 from app.api_1_0.mail_dispatcher.exceptions import Retry, MailServiceNotAvailable
 
 
@@ -221,12 +221,12 @@ class TestApi(unittest.TestCase):
     def test_sendgrind_worker(self):
         mail = Mail.from_dict(self.message)
         attempts = []
-        process_message('test', mail, mail_services['Sendgrid'][0], attempts)
+        process_message('test', mail, service_registry['Sendgrid'][0], attempts)
 
     def test_mailgun_worker(self):
         mail = Mail.from_dict(self.message)
         attempts = []
-        self.assertRaises(Retry, process_message,'test', mail, mail_services['Mailgun'][0], attempts)
+        self.assertRaises(Retry, process_message,'test', mail, service_registry['Mailgun'][0], attempts)
 
     def test_mail_service_none(self):
         mail = Mail.from_dict(self.message)
@@ -235,7 +235,7 @@ class TestApi(unittest.TestCase):
 
     def test_mail_service_not_available(self):
         attempts = []
-        for service in mail_services.keys():
+        for service in service_registry.keys():
             attempts.append(service)
         service = get_mail_service(attempts)
         self.assertIsNone(service)
