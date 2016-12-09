@@ -19,7 +19,7 @@ def process_message(caller, mail, service, attempts=[], url_events=None):
         events about the sending process of the mail
 
 
-    Raise: CircuitBreakerError
+    Raise: Retry, MailServiceNotAvailable
     """
     try:
         if service is None:

@@ -20,6 +20,8 @@ def enqueue(self, mail, attempts=[], url_events=None):
         url_events(str): if present, the string will be used as url to store
         events about the sending process of the mail
 
+    Raise: MailServiceNotAvailable
+
     """
     post_event_url(
         url_events,

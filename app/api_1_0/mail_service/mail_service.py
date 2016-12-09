@@ -29,7 +29,7 @@ class MailService(object):
             str: full name of the service
         """
 
-        return ("%s:%s")% (self.service_name, self.id)
+        return "%s:%s" % (self.service_name, self.id)
 
     def send(self, mail, url_events=None):
         """Send an email
@@ -40,7 +40,7 @@ class MailService(object):
                 Defaults to None.
 
         Raises:
-            MailServiceException            
+            ValidationError, MailServiceException, NetworkConnectionError
         """
 
         try:
@@ -95,7 +95,7 @@ class MailService(object):
                 Defaults to None.
 
         Raises:
-            MailServiceException
+            ValidationError, InvalidKey, PaymentRequired, MailServiceException
         """
         details = self.response_details(response)
         if details['status_code'] in [200, 202]:
@@ -109,11 +109,11 @@ class MailService(object):
             return True
 
         if details['status_code'] == 400:
-            raise ValidationError(details)
+            raise ValidationError(*details)
         elif details['status_code'] == 401:
-            raise InvalidKey(details)
+            raise InvalidKey(*details)
         elif details['status_code'] == 402:
-            raise PaymentRequired(details)
+            raise PaymentRequired(*details)
         else:
             raise MailServiceException(*details)
 
