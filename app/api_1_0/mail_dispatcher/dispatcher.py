@@ -33,7 +33,7 @@ class Dispatcher(object):
             return enqueue.apply_async(args=[mail, attempts, url_events])
         else:
             service = get_mail_service(attempts)
-            while service:
+            while True:
                 try:
                     process_message(Dispatcher.Name, mail, service, attempts, url_events)
                     return
