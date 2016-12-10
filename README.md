@@ -10,9 +10,9 @@ send users' emails. To guarantee service availability, we use two external mail 
 
 Live on [Heroku](https://m3rcury.herokuapp.com).
 
-Check my [profile](http://ie.linkedin.com/in/prisconapoli)
+Check my [profile](http://ie.linkedin.com/in/prisconapoli).
 
-[Presentation](https://github.com/prisconapoli/mercury/ppt/UberCodingChallange.pdf)
+See the [slides](https://github.com/prisconapoli/mercury/blob/master/ppt/UberCodingChallange.pdf).
 
 ## Overview
 
