@@ -12,6 +12,8 @@ Live on [Heroku](https://m3rcury.herokuapp.com).
 
 Check my [profile](http://ie.linkedin.com/in/prisconapoli)
 
+[Presentation](https://github.com/prisconapoli/mercury/ppt/UberCodingChallange.pdf)
+
 ## Overview
 
 M3rcury is a back-end application. The service is exposed through a RESTful API compliant with the Internet protocols HTTP and JSON.
